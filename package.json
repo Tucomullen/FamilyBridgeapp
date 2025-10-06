@@ -1,0 +1,51 @@
+{
+  "name": "familybridge",
+  "version": "1.0.0",
+  "description": "Connecting seniors with their families through ultra-simple, secure, and accessible technology",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:senior-app\" \"npm run dev:family-panel\" \"npm run dev:backend\"",
+    "dev:senior-app": "cd senior-app && npm run start",
+    "dev:family-panel": "cd family-panel && npm run dev",
+    "dev:backend": "cd backend && python -m uvicorn main:app --reload",
+    "build": "npm run build:senior-app && npm run build:family-panel && npm run build:backend",
+    "build:senior-app": "cd senior-app && npm run build",
+    "build:family-panel": "cd family-panel && npm run build",
+    "build:backend": "cd backend && python -m build",
+    "test": "npm run test:senior-app && npm run test:family-panel && npm run test:backend",
+    "test:senior-app": "cd senior-app && npm test",
+    "test:family-panel": "cd family-panel && npm test",
+    "test:backend": "cd backend && pytest",
+    "lint": "npm run lint:senior-app && npm run lint:family-panel && npm run lint:backend",
+    "lint:senior-app": "cd senior-app && npm run lint",
+    "lint:family-panel": "cd family-panel && npm run lint",
+    "lint:backend": "cd backend && flake8 .",
+    "install:all": "npm install && cd senior-app && npm install && cd ../family-panel && npm install && cd ../backend && pip install -r requirements.txt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tucomullen/FamilyBridgeapp.git"
+  },
+  "keywords": [
+    "senior",
+    "family",
+    "accessibility",
+    "communication",
+    "react-native",
+    "react",
+    "fastapi"
+  ],
+  "author": "Tucomullen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tucomullen/FamilyBridgeapp/issues"
+  },
+  "homepage": "https://github.com/Tucomullen/FamilyBridgeapp#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "senior-app",
+    "family-panel"
+  ]
+}
