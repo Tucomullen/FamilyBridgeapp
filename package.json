@@ -21,7 +21,8 @@
     "lint:family-panel": "cd family-panel && npm run lint",
     "lint:backend": "cd backend && flake8 .",
     "install:all": "npm install && cd senior-app && npm install && cd ../family-panel && npm install && cd ../backend && pip install -r requirements.txt",
-    "import:issues": "node scripts/import_issues.js"
+    "import:issues": "node scripts/import_issues.js",
+    "validate:csv": "node scripts/validate_csv.js"
   },
   "repository": {
     "type": "git",
