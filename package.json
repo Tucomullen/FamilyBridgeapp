@@ -23,7 +23,8 @@
     "install:all": "npm install && cd senior-app && npm install && cd ../family-panel && npm install && cd ../backend && pip install -r requirements.txt",
     "import:issues": "node scripts/import_issues.js",
     "validate:csv": "node scripts/validate_csv.js",
-    "setup:project": "node scripts/setup_project_board.js"
+    "setup:project": "node scripts/setup_project_board.js",
+    "create:project": "node scripts/create_project_with_issues.js"
   },
   "repository": {
     "type": "git",
