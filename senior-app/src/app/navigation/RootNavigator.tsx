@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OnboardingNavigator from '../onboarding/OnboardingNavigator';
-import { View, Text, Pressable } from 'react-native';
+import SeniorHomeScreen from '../screens/SeniorHomeScreen';
+import CallScreen from '../screens/CallScreen';
+import SosScreen from '../screens/SosScreen';
+import PhotosScreen from '../screens/PhotosScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
-
-function SeniorHome() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 24, color: '#fff' }}>Senior Home</Text>
-    </View>
-  );
-}
 
 export default function RootNavigator() {
   const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null);
@@ -26,7 +21,12 @@ export default function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {hasOnboarded ? (
-        <Stack.Screen name="Home" component={SeniorHome} />
+        <>
+          <Stack.Screen name="Home" component={SeniorHomeScreen} />
+          <Stack.Screen name="Call" component={CallScreen} />
+          <Stack.Screen name="SOS" component={SosScreen} />
+          <Stack.Screen name="Photos" component={PhotosScreen} />
+        </>
       ) : (
         <Stack.Screen name="Onboarding">
           {() => <OnboardingNavigator onDone={async () => {
