@@ -5,6 +5,29 @@
     "link": { "title": "Vincular con tu familia", "body": "Escanea este código en el Panel Familiar", "ctaShowQR": "Mostrar QR", "codeLabel": "Tu código" },
     "done": { "title": "¡Listo!", "body": "Ya puedes usar FamilyBridge", "ctaHome": "Ir a Inicio" },
     "tts": { "play": "Leer en voz alta", "stop": "Detener" }
+  },
+  "home": {
+    "title": "FamilyBridge",
+    "call": "Llamar",
+    "sos": "SOS",
+    "photos": "Fotos",
+    "hint": "Toca cualquier botón para comenzar",
+    "tts": { "readTitle": "Leer título" }
+  },
+  "call": {
+    "title": "Llamar",
+    "placeholder": "Funcionalidad de llamada próximamente"
+  },
+  "sos": {
+    "title": "SOS",
+    "placeholder": "Funcionalidad de emergencia próximamente"
+  },
+  "photos": {
+    "title": "Fotos",
+    "placeholder": "Galería de fotos próximamente"
+  },
+  "common": {
+    "back": "Atrás"
   }
 }
 

@@ -5,6 +5,29 @@
     "link": { "title": "Link with your family", "body": "Scan this code in the Family Panel", "ctaShowQR": "Show QR", "codeLabel": "Your code" },
     "done": { "title": "All set!", "body": "You're ready to use FamilyBridge", "ctaHome": "Go to Home" },
     "tts": { "play": "Read aloud", "stop": "Stop" }
+  },
+  "home": {
+    "title": "FamilyBridge",
+    "call": "Call",
+    "sos": "SOS",
+    "photos": "Photos",
+    "hint": "Tap any button to get started",
+    "tts": { "readTitle": "Read title" }
+  },
+  "call": {
+    "title": "Call",
+    "placeholder": "Call functionality coming soon"
+  },
+  "sos": {
+    "title": "SOS",
+    "placeholder": "Emergency functionality coming soon"
+  },
+  "photos": {
+    "title": "Photos",
+    "placeholder": "Photo gallery coming soon"
+  },
+  "common": {
+    "back": "Back"
   }
 }
 
