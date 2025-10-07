@@ -28,6 +28,50 @@
   },
   "common": {
     "back": "Back"
+  },
+  "settings": {
+    "title": "Settings",
+    "features": "Features",
+    "flags": {
+      "call": "Calls",
+      "sos": "SOS",
+      "photos": "Photos",
+      "telemetry": "Telemetry"
+    },
+    "reset": "Reset"
+  },
+  "call": {
+    "title": "Call",
+    "placeholder": "Call functionality coming soon",
+    "cta": {
+      "start": "Start Call",
+      "end": "End Call"
+    },
+    "state": {
+      "dialing": "Dialing...",
+      "connecting": "Connecting...",
+      "inCall": "In Call",
+      "ended": "Call Ended"
+    }
+  },
+  "sos": {
+    "title": "SOS",
+    "placeholder": "Emergency functionality coming soon",
+    "cta": {
+      "send": "Send Alert",
+      "retry": "Try Again"
+    },
+    "status": {
+      "sent": "Alert sent to family",
+      "failed": "Send failed. Try again?"
+    }
+  },
+  "photos": {
+    "title": "Photos",
+    "placeholder": "Photo gallery coming soon",
+    "cta": {
+      "next": "Next"
+    }
   }
 }
 

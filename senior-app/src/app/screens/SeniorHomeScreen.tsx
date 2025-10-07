@@ -1,25 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
 import { speak } from '../lib/accessibility/tts';
+import { featureFlags, FeatureFlag } from '../flags/featureFlags';
+import { logEvent } from '../telemetry/logEvent';
 
 type Props = {
   navigation: any;
 };
 
 export default function SeniorHomeScreen({ navigation }: Props) {
+  const [flags, setFlags] = useState<Record<FeatureFlag, boolean>>({
+    CALL_ENABLED: true,
+    SOS_ENABLED: true,
+    PHOTOS_ENABLED: true,
+    TELEMETRY_ENABLED: true,
+  });
+  const [tapCount, setTapCount] = useState(0);
+
+  useEffect(() => {
+    loadFlags();
+  }, []);
+
+  const loadFlags = async () => {
+    await featureFlags.initialize();
+    setFlags(featureFlags.getAllFlags());
+  };
+
   const title = t('home.title');
   
-  const handleCall = () => {
+  const handleCall = async () => {
+    if (!flags.CALL_ENABLED) return;
+    await logEvent('photos_open');
     navigation.navigate('Call');
   };
 
-  const handleSOS = () => {
+  const handleSOS = async () => {
+    if (!flags.SOS_ENABLED) return;
+    await logEvent('sos_send_attempt');
     navigation.navigate('SOS');
   };
 
-  const handlePhotos = () => {
+  const handlePhotos = async () => {
+    if (!flags.PHOTOS_ENABLED) return;
+    await logEvent('photos_open');
     navigation.navigate('Photos');
   };
 
@@ -27,17 +52,36 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     speak(title);
   };
 
+  const handleTitlePress = () => {
+    setTapCount(prev => {
+      const newCount = prev + 1;
+      if (newCount >= 3) {
+        setTapCount(0);
+        navigation.navigate('Settings');
+      }
+      return newCount;
+    });
+    
+    // Reset tap count after 2 seconds
+    setTimeout(() => setTapCount(0), 2000);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header with TTS */}
       <View style={styles.header}>
-        <Text 
-          accessibilityRole="header" 
+        <Pressable
+          accessibilityRole="button"
           accessibilityLabel={title}
-          style={[typography.h1, styles.title]}
+          onPress={handleTitlePress}
         >
-          {title}
-        </Text>
+          <Text 
+            accessibilityRole="header" 
+            style={[typography.h1, styles.title]}
+          >
+            {title}
+          </Text>
+        </Pressable>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('home.tts.readTitle')}
@@ -56,8 +100,13 @@ export default function SeniorHomeScreen({ navigation }: Props) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('home.call')}
+          accessibilityState={{ disabled: !flags.CALL_ENABLED }}
           onPress={handleCall}
-          style={[styles.actionTile, styles.callTile]}
+          style={[
+            styles.actionTile, 
+            styles.callTile,
+            !flags.CALL_ENABLED && styles.disabledTile
+          ]}
         >
           <Text style={[typography.h2, styles.tileIcon]}>📞</Text>
           <Text style={[typography.h2, styles.tileLabel]}>
@@ -69,8 +118,13 @@ export default function SeniorHomeScreen({ navigation }: Props) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('home.sos')}
+          accessibilityState={{ disabled: !flags.SOS_ENABLED }}
           onPress={handleSOS}
-          style={[styles.actionTile, styles.sosTile]}
+          style={[
+            styles.actionTile, 
+            styles.sosTile,
+            !flags.SOS_ENABLED && styles.disabledTile
+          ]}
         >
           <Text style={[typography.h2, styles.tileIcon]}>🚨</Text>
           <Text style={[typography.h2, styles.tileLabel]}>
@@ -82,8 +136,13 @@ export default function SeniorHomeScreen({ navigation }: Props) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('home.photos')}
+          accessibilityState={{ disabled: !flags.PHOTOS_ENABLED }}
           onPress={handlePhotos}
-          style={[styles.actionTile, styles.photosTile]}
+          style={[
+            styles.actionTile, 
+            styles.photosTile,
+            !flags.PHOTOS_ENABLED && styles.disabledTile
+          ]}
         >
           <Text style={[typography.h2, styles.tileIcon]}>📷</Text>
           <Text style={[typography.h2, styles.tileLabel]}>
@@ -165,5 +224,8 @@ const styles = StyleSheet.create({
     color: colors.mutedText,
     textAlign: 'center',
     maxWidth: 300,
+  },
+  disabledTile: {
+    opacity: 0.5,
   },
 });

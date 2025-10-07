@@ -28,6 +28,50 @@
   },
   "common": {
     "back": "Atrás"
+  },
+  "settings": {
+    "title": "Configuración",
+    "features": "Características",
+    "flags": {
+      "call": "Llamadas",
+      "sos": "SOS",
+      "photos": "Fotos",
+      "telemetry": "Telemetría"
+    },
+    "reset": "Restablecer"
+  },
+  "call": {
+    "title": "Llamar",
+    "placeholder": "Funcionalidad de llamada próximamente",
+    "cta": {
+      "start": "Iniciar Llamada",
+      "end": "Finalizar Llamada"
+    },
+    "state": {
+      "dialing": "Marcando...",
+      "connecting": "Conectando...",
+      "inCall": "En Llamada",
+      "ended": "Llamada Finalizada"
+    }
+  },
+  "sos": {
+    "title": "SOS",
+    "placeholder": "Funcionalidad de emergencia próximamente",
+    "cta": {
+      "send": "Enviar Alerta",
+      "retry": "Reintentar"
+    },
+    "status": {
+      "sent": "Alerta enviada a la familia",
+      "failed": "Error al enviar. Reintentar?"
+    }
+  },
+  "photos": {
+    "title": "Fotos",
+    "placeholder": "Galería de fotos próximamente",
+    "cta": {
+      "next": "Siguiente"
+    }
   }
 }
 

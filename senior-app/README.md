@@ -24,10 +24,24 @@ npx expo start
 # In the app, clear AsyncStorage or reinstall to reset onboarding
 ```
 
+## Feature Flags & Settings
+- **Access Settings**: Triple-tap the "FamilyBridge" title on home screen
+- **Toggle Features**: Use switches to enable/disable Call, SOS, Photos, Telemetry
+- **Reset**: Use "Reset" button to restore all flags to defaults
+- **Persistence**: All settings are saved to AsyncStorage
+
+## Mock Flows
+- **Call**: Auto-timeout after 10-15 seconds, manual end available
+- **SOS**: 85% success rate, retry on failure
+- **Photos**: 6 sample photos with emoji thumbnails, cycling navigation
+
 ## Home Screen Features
-- **Call**: One-touch calling (placeholder)
-- **SOS**: Emergency alert (placeholder) 
-- **Photos**: Family photo gallery (placeholder)
+- **Call**: Mock call flow with state machine (dialing → connecting → inCall → ended)
+- **SOS**: Mock emergency alert with retry logic (10-20% failure rate)
+- **Photos**: Mock photo gallery with 6 sample photos and cycling
+- **Feature Flags**: Runtime toggles for all features via Settings
+- **Settings**: Triple-tap title to access developer settings
+- **Telemetry**: Optional event logging (can be disabled)
 - **Accessibility**: Large buttons (160x160dp), TTS support, high contrast
 - **TTS**: Tap speaker icon to read screen title
 
