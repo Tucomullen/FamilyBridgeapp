@@ -143,4 +143,19 @@ Both templates include accessibility checklists specific to the FamilyBridge pro
 
 ---
 
+## ⚠️ Important: Onboarding Issues Priority
+
+The **Onboarding & First-Use Experience** issues (#16-#19) are critical for user adoption and must be implemented before any public testing:
+
+- **Issue #16**: Welcome Screen (P0)
+- **Issue #17**: Permission Screen (P0) 
+- **Issue #18**: Family Link Screen (P0)
+- **Issue #19**: Voice Support (P1)
+
+These onboarding features ensure seniors can successfully set up and use the app independently, which is essential for the MVP's success. Without proper onboarding, even the best core features will be inaccessible to the target audience.
+
+**Recommendation**: Prioritize onboarding issues in your development schedule and test them with actual senior users before proceeding to core features.
+
+---
+
 *This setup ensures efficient project management while maintaining focus on accessibility and senior-friendly design principles.*

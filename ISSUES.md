@@ -21,6 +21,12 @@ This document contains all GitHub issues derived from the development tasks in `
 - **Issue #14**: Add Photo Sharing for Seniors
 - **Issue #15**: Implement Real-time Notifications
 
+### Onboarding & First-Use
+- **Issue #16**: Welcome Screen
+- **Issue #17**: Permission Screen
+- **Issue #18**: Family Link Screen
+- **Issue #19**: Voice Support
+
 ---
 
 ## 🔥 Priority P1 (High - UI/UX)
@@ -237,15 +243,73 @@ This document contains all GitHub issues derived from the development tasks in `
   - Background processing
 - **Commit Message**: `feat: add real-time notifications for alerts and photo updates`
 
+### 4. Onboarding & First-Use Issues
+
+#### Issue #16: Welcome Screen
+- **Labels**: `onboarding`, `ui`, `accessibility`, `P0`
+- **Milestone**: `Phase 1 - MVP`
+- **Description**: Create simple introduction screen with large, friendly text and prominent "Start" button
+- **Deliverable**: `WelcomeScreen.tsx` component
+- **Acceptance Criteria**:
+  - Large, high-contrast text (≥ 24pt)
+  - Prominent "Start" button
+  - Voice narration support
+  - Simple, reassuring language
+  - One action per screen
+- **Commit Message**: `feat: implement welcome screen with voice narration`
+- **Related**: See [scope.md#onboarding-first-use-experience](./scope.md#onboarding-first-use-experience)
+
+#### Issue #17: Permission Screen
+- **Labels**: `onboarding`, `ui`, `accessibility`, `P0`
+- **Milestone**: `Phase 1 - MVP`
+- **Description**: Build clear permission request screen for camera/microphone access with simple Yes/No options
+- **Deliverable**: `PermissionScreen.tsx` component
+- **Acceptance Criteria**:
+  - Clear explanation of each permission
+  - Simple Yes/No buttons
+  - Voice narration support
+  - Error prevention with confirmations
+  - Plain language explanations
+- **Commit Message**: `feat: add permission screen with clear explanations`
+- **Related**: See [scope.md#onboarding-first-use-experience](./scope.md#onboarding-first-use-experience)
+
+#### Issue #18: Family Link Screen
+- **Labels**: `onboarding`, `ui`, `accessibility`, `P0`
+- **Milestone**: `Phase 1 - MVP`
+- **Description**: Create QR code display screen for easy connection with family members' web panel
+- **Deliverable**: `FamilyLinkScreen.tsx` component
+- **Acceptance Criteria**:
+  - Large, clear QR code display
+  - Simple instructions
+  - Voice narration support
+  - Fallback connection method
+  - Clear visual hierarchy
+- **Commit Message**: `feat: implement family link screen with QR code`
+- **Related**: See [scope.md#onboarding-first-use-experience](./scope.md#onboarding-first-use-experience)
+
+#### Issue #19: Voice Support
+- **Labels**: `onboarding`, `ui`, `accessibility`, `P1`
+- **Milestone**: `Phase 1 - MVP`
+- **Description**: Add text-to-speech narration support for all onboarding screens
+- **Deliverable**: `VoiceService.ts` and voice components
+- **Acceptance Criteria**:
+  - Text-to-speech on all onboarding screens
+  - Voice control for navigation
+  - Clear, slow speech
+  - Volume control
+  - Accessibility compliance
+- **Commit Message**: `feat: add text-to-speech support for onboarding`
+- **Related**: See [scope.md#onboarding-first-use-experience](./scope.md#onboarding-first-use-experience)
+
 ---
 
 ## 📊 Issue Summary
 
 | Priority | Count | Categories |
 |----------|-------|------------|
-| P0 (Critical) | 10 | Setup & Environment (5), Core Features (5) |
-| P1 (High) | 5 | UI/UX Senior App (5) |
-| **Total** | **15** | **3 Categories** |
+| P0 (Critical) | 13 | Setup & Environment (5), Core Features (5), Onboarding (3) |
+| P1 (High) | 6 | UI/UX Senior App (5), Onboarding (1) |
+| **Total** | **19** | **4 Categories** |
 
 ---
 

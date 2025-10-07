@@ -27,6 +27,32 @@ Video calls, photos, and family chats are currently spread across many apps (Wha
 
 ---
 
+## 4.5. 🚀 Onboarding & First-Use Experience
+
+The first-time user experience is critical for senior adoption. The onboarding flow consists of 3–4 simple screens designed to build confidence and establish essential connections.
+
+### Onboarding Flow
+1. **Welcome Screen** - Simple introduction with large, friendly text and a prominent "Start" button
+2. **Permission Screen** - Clear explanation of camera/microphone access with simple Yes/No options
+3. **Family Link Screen** - QR code display for easy connection with family members' web panel
+4. **Voice Support** - Text-to-speech narration available on all onboarding screens
+
+### Design Principles
+- **Large, high-contrast text** (≥ 24pt) for maximum readability
+- **Simple, reassuring language** that builds confidence
+- **Voice narration** for users who prefer audio guidance
+- **One action per screen** to avoid cognitive overload
+- **Clear visual hierarchy** with prominent call-to-action buttons
+- **Error prevention** with confirmation steps for critical actions
+
+### Goals
+- **Simplicity**: Complete setup in under 2 minutes
+- **Reassurance**: Clear explanations of what each permission does
+- **Autonomy**: Enable seniors to set up the app independently
+- **Confidence**: Build trust through clear, friendly interface design
+
+---
+
 ## 5. 🧱 Simplicity and Design Rules  
 - **Large, high-contrast typography (≥ 18 pt).**  
 - **Clearly differentiated colors** (high-contrast mode, black/white + primary color).  

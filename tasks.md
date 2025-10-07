@@ -63,29 +63,53 @@ This document contains all development tasks for Phase 1 (MVP) of the FamilyBrid
 
 ---
 
-## 3. Core Features (One-touch Call, SOS, Photo Sharing)
+## 3. Onboarding & First-Use Experience
 
-### Task 3.1: Implement One-Touch Calling
+### Task 3.1: Welcome Screen
+- **Description**: Create simple introduction screen with large, friendly text and prominent "Start" button
+- **Deliverable**: `WelcomeScreen.tsx` component
+- **Commit Message**: `feat: implement welcome screen with voice narration`
+
+### Task 3.2: Permission Screen
+- **Description**: Build clear permission request screen for camera/microphone access with simple Yes/No options
+- **Deliverable**: `PermissionScreen.tsx` component
+- **Commit Message**: `feat: add permission screen with clear explanations`
+
+### Task 3.3: Family Link Screen
+- **Description**: Create QR code display screen for easy connection with family members' web panel
+- **Deliverable**: `FamilyLinkScreen.tsx` component
+- **Commit Message**: `feat: implement family link screen with QR code`
+
+### Task 3.4: Voice Support
+- **Description**: Add text-to-speech narration support for all onboarding screens
+- **Deliverable**: `VoiceService.ts` and voice components
+- **Commit Message**: `feat: add text-to-speech support for onboarding`
+
+---
+
+## 4. Core Features (One-touch Call, SOS, Photo Sharing)
+
+### Task 4.1: Implement One-Touch Calling
 - **Description**: Build audio/video calling functionality with single tap to initiate calls
 - **Deliverable**: `CallService.ts` and calling components
 - **Commit Message**: `feat: implement one-touch audio/video calling system`
 
-### Task 3.2: Create SOS Alert System
+### Task 4.2: Create SOS Alert System
 - **Description**: Build red SOS button that sends instant alerts to main family contact
 - **Deliverable**: `SOSService.ts` and `SOSButton.tsx`
 - **Commit Message**: `feat: add SOS button with instant family alert system`
 
-### Task 3.3: Build Photo Upload System
+### Task 4.3: Build Photo Upload System
 - **Description**: Create system for family members to upload photos from web panel
 - **Deliverable**: `PhotoUploadService.ts` and upload components
 - **Commit Message**: `feat: implement photo upload system for family members`
 
-### Task 3.4: Add Photo Sharing for Seniors
+### Task 4.4: Add Photo Sharing for Seniors
 - **Description**: Enable seniors to view and react to family photos with simple emojis
 - **Deliverable**: `PhotoSharingService.ts` and reaction components
 - **Commit Message**: `feat: add photo sharing and emoji reactions for seniors`
 
-### Task 3.5: Implement Real-time Notifications
+### Task 4.5: Implement Real-time Notifications
 - **Description**: Set up push notifications for SOS alerts and new photos
 - **Deliverable**: `NotificationService.ts`
 - **Commit Message**: `feat: add real-time notifications for alerts and photo updates`
@@ -98,8 +122,9 @@ This document contains all development tasks for Phase 1 (MVP) of the FamilyBrid
 |----------|------------|----------------|----------|
 | Setup & Environment | 5 tasks | 3-5 days | High |
 | UI/UX (Senior App) | 5 tasks | 7-10 days | High |
+| Onboarding & First-Use | 4 tasks | 5-7 days | High |
 | Core Features | 5 tasks | 10-15 days | High |
-| **Total** | **15 tasks** | **20-30 days** | - |
+| **Total** | **19 tasks** | **25-37 days** | - |
 
 ---
 
