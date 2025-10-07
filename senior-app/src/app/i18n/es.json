@@ -1,0 +1,11 @@
+{
+  "onb": {
+    "welcome": { "title": "Bienvenido a FamilyBridge", "cta": "Comenzar" },
+    "perms": { "title": "Permitir cámara y micrófono", "body": "Los usamos para las llamadas.", "ctaAllow": "Permitir" },
+    "link": { "title": "Vincular con tu familia", "body": "Escanea este código en el Panel Familiar", "ctaShowQR": "Mostrar QR", "codeLabel": "Tu código" },
+    "done": { "title": "¡Listo!", "body": "Ya puedes usar FamilyBridge", "ctaHome": "Ir a Inicio" },
+    "tts": { "play": "Leer en voz alta", "stop": "Detener" }
+  }
+}
+
+
