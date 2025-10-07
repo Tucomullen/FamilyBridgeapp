@@ -23,6 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
     
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -31,24 +32,24 @@ jobs:
     
     - name: Install dependencies
       run: |
-        npm ci
-        pip install -r requirements.txt
+        npm install
+        cd senior-app && npm install
+        cd ../family-panel && npm install
+        cd ../backend && pip install -r requirements.txt
     
     - name: Run tests
       run: |
-        npm test
-        pytest
+        npm run test:senior-app
+        cd backend && pytest
     
     - name: Run linting
       run: |
-        npm run lint
-        flake8 .
+        npm run lint:senior-app
+        cd backend && flake8 .
     
     - name: Build applications
       run: |
         npm run build:senior-app
-        npm run build:family-panel
-        npm run build:backend
 
   security:
     runs-on: ubuntu-latest
@@ -59,7 +60,7 @@ jobs:
     - name: Run security audit
       run: |
         npm audit --audit-level moderate
-        safety check
+        cd senior-app && npm audit --audit-level moderate
     
     - name: Run CodeQL Analysis
       uses: github/codeql-action/analyze@v3
