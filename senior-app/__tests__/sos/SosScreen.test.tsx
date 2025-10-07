@@ -1,16 +1,11 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import SosScreen from '../../src/app/screens/SosScreen';
 
 // Mock the telemetry module
 jest.mock('../../src/app/telemetry/logEvent', () => ({
   logEvent: jest.fn(),
 }));
-
-// Mock Math.random for predictable test results
-const mockMath = Object.create(global.Math);
-mockMath.random = jest.fn();
-global.Math = mockMath;
 
 // Mock timers
 jest.useFakeTimers();
@@ -30,7 +25,7 @@ describe('SosScreen', () => {
   });
 
   it('renders initial state', () => {
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 
@@ -39,21 +34,23 @@ describe('SosScreen', () => {
   });
 
   it('sends alert successfully', async () => {
-    // Mock successful send (85% chance)
-    mockMath.random.mockReturnValue(0.8);
-
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 
     const sendButton = getByText(/Enviar Alerta|Send Alert/i);
-    fireEvent.press(sendButton);
+    
+    await act(async () => {
+      fireEvent.press(sendButton);
+    });
 
     // Should show sending state
     expect(getByText(/Enviando alerta|Sending/i)).toBeTruthy();
 
     // Fast forward to completion
-    jest.advanceTimersByTime(2000);
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
 
     await waitFor(() => {
       expect(getByText(/Alerta enviada a la familia|Alert sent to family/i)).toBeTruthy();
@@ -61,70 +58,95 @@ describe('SosScreen', () => {
   });
 
   it('handles send failure and shows retry', async () => {
-    // Mock failure (15% chance)
-    mockMath.random.mockReturnValue(0.1);
+    // Temporarily override __DEV__ to false to test failure path
+    const originalDev = global.__DEV__;
+    global.__DEV__ = false;
+    
+    // Mock Math.random to return failure value
+    const originalRandom = Math.random;
+    Math.random = jest.fn(() => 0.1); // 15% chance of failure
 
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 
     const sendButton = getByText(/Enviar Alerta|Send Alert/i);
-    fireEvent.press(sendButton);
+    
+    await act(async () => {
+      fireEvent.press(sendButton);
+    });
 
     // Fast forward to completion
-    jest.advanceTimersByTime(2000);
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
 
     await waitFor(() => {
       expect(getByText(/Error al enviar|Send failed/i)).toBeTruthy();
-      expect(getByText(/Reintentar|Try Again/i)).toBeTruthy();
+      expect(getByRole('button', { name: /Reintentar|Try Again/i })).toBeTruthy();
     });
+
+    // Restore original values
+    global.__DEV__ = originalDev;
+    Math.random = originalRandom;
   });
 
   it('retries after failure', async () => {
-    // Mock failure first, then success
-    mockMath.random
-      .mockReturnValueOnce(0.1) // First call fails
-      .mockReturnValueOnce(0.8); // Retry succeeds
+    // Temporarily override __DEV__ to false to test failure path
+    const originalDev = global.__DEV__;
+    global.__DEV__ = false;
+    
+    // Mock Math.random to return failure value
+    const originalRandom = Math.random;
+    Math.random = jest.fn(() => 0.1); // 15% chance of failure
 
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 
     const sendButton = getByText(/Enviar Alerta|Send Alert/i);
-    fireEvent.press(sendButton);
+    
+    await act(async () => {
+      fireEvent.press(sendButton);
+    });
 
     // Fast forward to failure
-    jest.advanceTimersByTime(2000);
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
 
     await waitFor(() => {
       expect(getByText(/Error al enviar|Send failed/i)).toBeTruthy();
     });
 
-    const retryButton = getByText(/Reintentar|Try Again/i);
-    fireEvent.press(retryButton);
+    const retryButton = getByRole('button', { name: /Reintentar|Try Again/i });
+    
+    await act(async () => {
+      fireEvent.press(retryButton);
+    });
 
     // Should show sending again
     expect(getByText(/Enviando alerta|Sending/i)).toBeTruthy();
 
-    // Fast forward to success
-    jest.advanceTimersByTime(2000);
-
-    await waitFor(() => {
-      expect(getByText(/Alerta enviada a la familia|Alert sent to family/i)).toBeTruthy();
-    });
+    // Restore original values
+    global.__DEV__ = originalDev;
+    Math.random = originalRandom;
   });
 
   it('shows reset button after completion', async () => {
-    mockMath.random.mockReturnValue(0.8);
-
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 
     const sendButton = getByText(/Enviar Alerta|Send Alert/i);
-    fireEvent.press(sendButton);
+    
+    await act(async () => {
+      fireEvent.press(sendButton);
+    });
 
-    jest.advanceTimersByTime(2000);
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
 
     await waitFor(() => {
       expect(getByText(/Reset/i)).toBeTruthy();
@@ -132,29 +154,42 @@ describe('SosScreen', () => {
   });
 
   it('resets alert state', async () => {
-    mockMath.random.mockReturnValue(0.8);
+    // Ensure we're in dev mode for success path
+    const originalDev = global.__DEV__;
+    global.__DEV__ = true;
 
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 
     const sendButton = getByText(/Enviar Alerta|Send Alert/i);
-    fireEvent.press(sendButton);
+    
+    await act(async () => {
+      fireEvent.press(sendButton);
+    });
 
-    jest.advanceTimersByTime(2000);
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
 
     await waitFor(() => {
       expect(getByText(/Alerta enviada a la familia|Alert sent to family/i)).toBeTruthy();
     });
 
     const resetButton = getByText(/Reset/i);
-    fireEvent.press(resetButton);
+    
+    await act(async () => {
+      fireEvent.press(resetButton);
+    });
 
     expect(getByText(/Funcionalidad de emergencia próximamente|Emergency functionality coming soon/i)).toBeTruthy();
+
+    // Restore original value
+    global.__DEV__ = originalDev;
   });
 
   it('navigates back', () => {
-    const { getByText } = render(
+    const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
     );
 

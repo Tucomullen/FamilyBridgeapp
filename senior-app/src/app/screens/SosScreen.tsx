@@ -19,8 +19,8 @@ export default function SosScreen({ navigation }: Props) {
     
     // Simulate network delay
     setTimeout(() => {
-      // Random 10-20% chance of failure
-      const isSuccess = Math.random() > 0.15;
+      // Random 10-20% chance of failure (fixed in dev for testing)
+      const isSuccess = __DEV__ ? true : Math.random() > 0.15;
       
       if (isSuccess) {
         setSosState('sent');

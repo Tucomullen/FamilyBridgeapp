@@ -12,7 +12,7 @@ type CallState = 'idle' | 'dialing' | 'connecting' | 'inCall' | 'ended';
 
 export default function CallScreen({ navigation }: Props) {
   const [callState, setCallState] = useState<CallState>('idle');
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
@@ -36,12 +36,12 @@ export default function CallScreen({ navigation }: Props) {
         setCallState('inCall');
         logEvent('call_state_change', { state: 'inCall' });
         
-        // Auto-end call after 10-15 seconds
-        const callTimeout = setTimeout(() => {
-          setCallState('ended');
-          logEvent('call_state_change', { state: 'ended' });
-          logEvent('call_end');
-        }, Math.random() * 5000 + 10000); // 10-15 seconds
+                // Auto-end call after 10-15 seconds
+                const callTimeout = setTimeout(() => {
+                  setCallState('ended');
+                  logEvent('call_state_change', { state: 'ended' });
+                  logEvent('call_end');
+                }, __DEV__ ? 10000 : Math.random() * 5000 + 10000); // Fixed 10s in dev, 10-15s in prod
         
         setTimeoutId(callTimeout);
       }, 2000);
