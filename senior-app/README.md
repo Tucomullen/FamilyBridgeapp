@@ -10,6 +10,81 @@ npm run start
 # press i / a to run on iOS/Android, or use Expo Go
 ```
 
+## Real WebRTC Calls (iOS-first)
+
+### Prerequisites
+- iOS device or simulator
+- Node.js for signaling server
+- Docker (optional, for TURN server)
+
+### Quick Start
+
+1. **Start Signaling Server**:
+```bash
+cd services/signaling
+npm install
+npm run dev
+# Server runs on http://localhost:3001
+```
+
+2. **Start TURN Server (Optional)**:
+```bash
+cd ops/coturn
+docker-compose up -d
+# TURN server runs on localhost:3478
+```
+
+3. **Run Mobile App**:
+```bash
+cd senior-app
+npm run start
+# Use Expo Go for basic testing
+# Use Dev Client for full WebRTC features
+```
+
+### iOS Dev Client for WebRTC
+
+WebRTC requires native modules that may not work in Expo Go. Use Dev Client:
+
+```bash
+# Build and run on iOS device
+cd senior-app
+npx expo prebuild
+npx expo run:ios
+
+# Or run on device
+npm run dev-client
+```
+
+### Testing Calls
+
+1. **Single Device Test**: Call screen auto-starts in test room
+2. **Two Device Test**: 
+   - Run app on two devices/simulators
+   - Both join same room (e.g., "test-room")
+   - Video and audio should work bidirectionally
+
+### ICE Server Configuration
+
+Default STUN servers (no auth required):
+- `stun:stun.l.google.com:19302`
+- `stun:stun1.l.google.com:19302`
+- `stun:stun2.l.google.com:19302`
+
+For TURN server (with local coturn):
+- `turn:localhost:3478` (username: test, password: testpass)
+
+### Manual Test Plan
+
+1. ✅ Run signaling server (`npm run dev` in services/signaling)
+2. ✅ Run mobile app on two devices
+3. ✅ Start call → both see video + hear audio
+4. ✅ Hang up works
+5. ✅ Logs show call_start → call_end events
+6. ✅ Call quality indicators visible
+7. ✅ Mute/unmute works
+8. ✅ Camera switch works
+
 ## App Flow (Phase 1)
 - **First launch**: Onboarding flow (Welcome → Permissions → Family Link → Confirmation)
 - **After onboarding**: Senior Home with 3 main actions (Call, SOS, Photos)

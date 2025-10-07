@@ -1,187 +1,271 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { RTCView } from 'react-native-webrtc';
 import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
-import { logEvent } from '../telemetry/logEvent';
+import { useCall } from '../hooks/useCall';
+import { CallState, CallQuality } from '../types/call';
 
 type Props = {
   navigation: any;
 };
 
-type CallState = 'idle' | 'dialing' | 'connecting' | 'inCall' | 'ended';
-
 export default function CallScreen({ navigation }: Props) {
-  const [callState, setCallState] = useState<CallState>('idle');
-  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const {
+    state: callState,
+    quality,
+    stats,
+    isMuted,
+    startCall,
+    endCall,
+    toggleMute,
+    switchCamera,
+    getLocalStream,
+    getRemoteStream,
+  } = useCall();
+
+  const [roomId] = useState('test-room'); // For testing
 
   useEffect(() => {
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [timeoutId]);
-
-  const startCall = async () => {
-    setCallState('dialing');
-    await logEvent('call_start');
-    
-    // Simulate dialing
-    const dialingTimeout = setTimeout(() => {
-      setCallState('connecting');
-      logEvent('call_state_change', { state: 'connecting' });
-      
-      // Simulate connecting
-      const connectingTimeout = setTimeout(() => {
-        setCallState('inCall');
-        logEvent('call_state_change', { state: 'inCall' });
-        
-                // Auto-end call after 10-15 seconds
-                const callTimeout = setTimeout(() => {
-                  setCallState('ended');
-                  logEvent('call_state_change', { state: 'ended' });
-                  logEvent('call_end');
-                }, __DEV__ ? 10000 : Math.random() * 5000 + 10000); // Fixed 10s in dev, 10-15s in prod
-        
-        setTimeoutId(callTimeout);
-      }, 2000);
-      
-      setTimeoutId(connectingTimeout);
-    }, 2000);
-    
-    setTimeoutId(dialingTimeout);
-  };
-
-  const endCall = async () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    setCallState('ended');
-    await logEvent('call_state_change', { state: 'ended' });
-    await logEvent('call_end');
-  };
-
-  const resetCall = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    setCallState('idle');
-  };
+    // Auto-start call for testing
+    startCall(roomId, true);
+  }, [roomId, startCall]);
 
   const getStateText = () => {
     switch (callState) {
       case 'idle': return t('call.placeholder');
-      case 'dialing': return t('call.state.dialing');
       case 'connecting': return t('call.state.connecting');
       case 'inCall': return t('call.state.inCall');
       case 'ended': return t('call.state.ended');
+      case 'error': return 'Call Error';
       default: return '';
     }
   };
 
-  const getButtonText = () => {
-    switch (callState) {
-      case 'idle': return t('call.cta.start');
-      case 'inCall': return t('call.cta.end');
-      case 'ended': return t('call.cta.start');
-      default: return t('call.cta.end');
+  const getQualityColor = () => {
+    switch (quality) {
+      case 'good': return colors.success;
+      case 'fair': return colors.warning;
+      case 'poor': return colors.danger;
+      default: return colors.mutedText;
     }
   };
 
-  const handleButtonPress = () => {
-    switch (callState) {
-      case 'idle':
-      case 'ended':
-        startCall();
-        break;
-      case 'dialing':
-      case 'connecting':
-      case 'inCall':
-        endCall();
-        break;
+  const getQualityText = () => {
+    switch (quality) {
+      case 'good': return 'Good';
+      case 'fair': return 'Fair';
+      case 'poor': return 'Poor';
+      default: return '';
     }
   };
+
+  const localStream = getLocalStream();
+  const remoteStream = getRemoteStream();
 
   return (
-    <View style={{
-      flex: 1,
-      backgroundColor: colors.highContrastBg,
-      padding: spacing.l,
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <Text 
-        accessibilityRole="header"
-        style={[typography.h1, { color: colors.text, textAlign: 'center', marginBottom: spacing.xl }]}
-      >
-        {t('call.title')}
-      </Text>
-      
-      <Text 
-        style={[typography.h2, { 
-          color: callState === 'ended' ? colors.mutedText : colors.text, 
-          textAlign: 'center', 
-          marginBottom: spacing.xl,
-          minHeight: 60,
-        }]}
-      >
-        {getStateText()}
-      </Text>
-
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={getButtonText()}
-        onPress={handleButtonPress}
-        style={{
-          padding: spacing.xl,
-          backgroundColor: callState === 'inCall' ? colors.danger : colors.primary,
-          borderRadius: 12,
-          minWidth: 200,
-          alignItems: 'center',
-          marginBottom: spacing.l,
-        }}
-      >
-        <Text style={[typography.button, { color: colors.text }]}>
-          {getButtonText()}
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text 
+          accessibilityRole="header"
+          style={[typography.h1, styles.title]}
+        >
+          {t('call.title')}
         </Text>
-      </Pressable>
+        
+        {/* Status and Quality */}
+        <View style={styles.statusContainer}>
+          <Text style={[typography.h3, styles.statusText]}>
+            {getStateText()}
+          </Text>
+          {callState === 'inCall' && (
+            <View style={styles.qualityContainer}>
+              <View style={[styles.qualityDot, { backgroundColor: getQualityColor() }]} />
+              <Text style={[typography.body, { color: getQualityColor() }]}>
+                {getQualityText()}
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
 
-      {callState === 'ended' && (
+      {/* Video Views */}
+      <View style={styles.videoContainer}>
+        {/* Remote Video */}
+        {remoteStream ? (
+          <RTCView
+            style={styles.remoteVideo}
+            streamURL={remoteStream.toURL()}
+            mirror={false}
+          />
+        ) : (
+          <View style={[styles.remoteVideo, styles.placeholderVideo]}>
+            <Text style={[typography.h2, styles.placeholderText]}>
+              Waiting for remote video...
+            </Text>
+          </View>
+        )}
+
+        {/* Local Video (Picture-in-Picture) */}
+        {localStream && callState === 'inCall' && (
+          <RTCView
+            style={styles.localVideo}
+            streamURL={localStream.toURL()}
+            mirror={true}
+          />
+        )}
+      </View>
+
+      {/* Call Controls */}
+      <View style={styles.controlsContainer}>
+        {callState === 'inCall' && (
+          <>
+            {/* Mute Button */}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={isMuted ? 'Unmute' : 'Mute'}
+              onPress={toggleMute}
+              style={[styles.controlButton, isMuted && styles.controlButtonActive]}
+            >
+              <Text style={[typography.h2, styles.controlButtonText]}>
+                {isMuted ? '🔇' : '🎤'}
+              </Text>
+            </Pressable>
+
+            {/* Switch Camera Button */}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Switch Camera"
+              onPress={switchCamera}
+              style={styles.controlButton}
+            >
+              <Text style={[typography.h2, styles.controlButtonText]}>
+                🔄
+              </Text>
+            </Pressable>
+          </>
+        )}
+
+        {/* End Call Button */}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Reset"
-          onPress={resetCall}
-          style={{
-            padding: spacing.m,
-            backgroundColor: colors.surface,
-            borderRadius: 8,
-            minWidth: 120,
-            alignItems: 'center',
-            marginBottom: spacing.l,
-          }}
+          accessibilityLabel="End Call"
+          onPress={endCall}
+          style={[styles.controlButton, styles.endCallButton]}
         >
-          <Text style={[typography.body, { color: colors.text }]}>
-            Reset
+          <Text style={[typography.h2, styles.controlButtonText]}>
+            📞
           </Text>
         </Pressable>
-      )}
+      </View>
 
+      {/* Back Button */}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('common.back')}
         onPress={() => navigation.goBack()}
-        style={{
-          padding: spacing.l,
-          backgroundColor: colors.surface,
-          borderRadius: 12,
-          minWidth: 120,
-          alignItems: 'center',
-        }}
+        style={styles.backButton}
       >
-        <Text style={[typography.button, { color: colors.text }]}>
+        <Text style={[typography.button, styles.backButtonText]}>
           {t('common.back')}
         </Text>
       </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.highContrastBg,
+  },
+  header: {
+    padding: spacing.l,
+    alignItems: 'center',
+  },
+  title: {
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: spacing.m,
+  },
+  statusContainer: {
+    alignItems: 'center',
+  },
+  statusText: {
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: spacing.s,
+  },
+  qualityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.s,
+  },
+  qualityDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  videoContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  remoteVideo: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  placeholderVideo: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    color: colors.mutedText,
+    textAlign: 'center',
+  },
+  localVideo: {
+    position: 'absolute',
+    top: spacing.l,
+    right: spacing.l,
+    width: 120,
+    height: 160,
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+  },
+  controlsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.l,
+    gap: spacing.l,
+  },
+  controlButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  controlButtonActive: {
+    backgroundColor: colors.danger,
+  },
+  endCallButton: {
+    backgroundColor: colors.danger,
+  },
+  controlButtonText: {
+    fontSize: 24,
+  },
+  backButton: {
+    padding: spacing.l,
+    backgroundColor: colors.surface,
+    margin: spacing.l,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: colors.text,
+  },
+});

@@ -2,8 +2,12 @@ import { featureFlags } from '../flags/featureFlags';
 
 export type TelemetryEvent = 
   | 'call_start' 
+  | 'call_connected'
   | 'call_state_change' 
   | 'call_end'
+  | 'call_error'
+  | 'call_mute_toggle'
+  | 'call_camera_switch'
   | 'sos_send_attempt' 
   | 'sos_sent' 
   | 'sos_retry'

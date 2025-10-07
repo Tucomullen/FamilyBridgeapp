@@ -1,0 +1,8 @@
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#1a1a1a"/>
+  <circle cx="512" cy="400" r="150" fill="#4CAF50"/>
+  <path d="M512 600c-100 0-180 60-220 150h440c-40-90-120-150-220-150z" fill="#4CAF50"/>
+  <text x="512" y="800" text-anchor="middle" font-family="Arial, sans-serif" font-size="150" fill="white">FamilyBridge</text>
+  <text x="512" y="900" text-anchor="middle" font-family="Arial, sans-serif" font-size="60" fill="#ccc">Senior App</text>
+</svg>

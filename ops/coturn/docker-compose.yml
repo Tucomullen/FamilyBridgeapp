@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  coturn:
+    image: coturn/coturn:latest
+    container_name: familybridge-coturn
+    ports:
+      - "3478:3478"   # TURN/STUN
+      - "3478:3478/udp"
+      - "49152-65535:49152-65535/udp"  # TURN relay ports
+    environment:
+      - TURN_USERNAME=test
+      - TURN_PASSWORD=testpass
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf:ro
+    command: ["-n", "--log-file=stdout", "--external-ip=auto-detect"]
+    restart: unless-stopped
+    networks:
+      - coturn-net
+
+networks:
+  coturn-net:
+    driver: bridge

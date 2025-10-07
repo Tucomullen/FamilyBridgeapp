@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, Switch, ScrollView } from 'react-native';
 import { colors, spacing, typography } from '../theme/colors';
-import { t } from '../i18n';
+import { t, setLocale, getCurrentLocale, getDeviceLanguageCode, logLanguageInfo } from '../i18n';
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
 
@@ -16,6 +16,7 @@ export default function SettingsScreen({ navigation }: Props) {
     PHOTOS_ENABLED: true,
     TELEMETRY_ENABLED: true,
   });
+  const [currentLanguage, setCurrentLanguage] = useState(getCurrentLocale());
 
   useEffect(() => {
     loadFlags();
@@ -40,6 +41,12 @@ export default function SettingsScreen({ navigation }: Props) {
     await loadFlags();
   };
 
+  const switchLanguage = (language: 'es' | 'en') => {
+    setLocale(language);
+    setCurrentLanguage(language);
+    logLanguageInfo();
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text 
@@ -48,6 +55,48 @@ export default function SettingsScreen({ navigation }: Props) {
       >
         {t('settings.title')}
       </Text>
+
+      {/* Language Selection */}
+      <View style={styles.section}>
+        <Text style={[typography.h2, styles.sectionTitle]}>
+          {t('settings.language.title')}
+        </Text>
+        <Text style={[typography.body, styles.languageInfo]}>
+          {t('settings.language.device')}: {getDeviceLanguageCode()}
+        </Text>
+        
+                <View style={styles.languageRow}>
+          <Pressable
+            style={[
+              styles.languageButton,
+              currentLanguage === 'es' && styles.languageButtonActive
+            ]}
+            onPress={() => switchLanguage('es')}
+          >
+            <Text style={[
+              styles.languageButtonText,
+              currentLanguage === 'es' && styles.languageButtonTextActive
+            ]}>
+              Español
+            </Text>
+          </Pressable>
+          
+          <Pressable
+            style={[
+              styles.languageButton,
+              currentLanguage === 'en' && styles.languageButtonActive
+            ]}
+            onPress={() => switchLanguage('en')}
+          >
+            <Text style={[
+              styles.languageButtonText,
+              currentLanguage === 'en' && styles.languageButtonTextActive
+            ]}>
+              English
+            </Text>
+          </Pressable>
+        </View>
+      </View>
 
       <View style={styles.section}>
         <Text style={[typography.h2, styles.sectionTitle]}>
@@ -147,6 +196,36 @@ const styles = {
   sectionTitle: {
     color: colors.text,
     marginBottom: spacing.l,
+  },
+  languageInfo: {
+    color: colors.mutedText,
+    marginBottom: spacing.m,
+    textAlign: 'center' as const,
+  },
+  languageRow: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-around' as const,
+  },
+  languageButton: {
+    flex: 1,
+    padding: spacing.m,
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    alignItems: 'center' as const,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  languageButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.text,
+  },
+  languageButtonText: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: '600' as const,
+  },
+  languageButtonTextActive: {
+    color: colors.highContrastBg,
   },
   flagRow: {
     flexDirection: 'row' as const,

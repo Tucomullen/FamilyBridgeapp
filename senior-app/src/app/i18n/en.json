@@ -12,7 +12,9 @@
     "sos": "SOS",
     "photos": "Photos",
     "hint": "Tap any button to get started",
-    "tts": { "readTitle": "Read title" }
+    "tts": { "readTitle": "Read title" },
+    "noFeatures": "No features enabled",
+    "noFeaturesHint": "Go to Settings to enable features"
   },
   "call": {
     "title": "Call",
@@ -31,6 +33,10 @@
   },
   "settings": {
     "title": "Settings",
+    "language": {
+      "title": "Language",
+      "device": "Device detected"
+    },
     "features": "Features",
     "flags": {
       "call": "Calls",

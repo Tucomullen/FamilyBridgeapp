@@ -23,6 +23,14 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     loadFlags();
   }, []);
 
+  // Refresh flags when screen comes into focus (e.g., returning from settings)
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadFlags();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const loadFlags = async () => {
     await featureFlags.initialize();
     setFlags(featureFlags.getAllFlags());
@@ -96,59 +104,63 @@ export default function SeniorHomeScreen({ navigation }: Props) {
 
       {/* Main Action Grid */}
       <View style={styles.grid}>
-        {/* Call Button */}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('home.call')}
-          accessibilityState={{ disabled: !flags.CALL_ENABLED }}
-          onPress={handleCall}
-          style={[
-            styles.actionTile, 
-            styles.callTile,
-            !flags.CALL_ENABLED && styles.disabledTile
-          ]}
-        >
-          <Text style={[typography.h2, styles.tileIcon]}>📞</Text>
-          <Text style={[typography.h2, styles.tileLabel]}>
-            {t('home.call')}
-          </Text>
-        </Pressable>
+        {/* Call Button - Only show if enabled */}
+        {flags.CALL_ENABLED && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.call')}
+            onPress={handleCall}
+            style={[styles.actionTile, styles.callTile]}
+          >
+            <Text style={[typography.h2, styles.tileIcon]}>📞</Text>
+            <Text style={[typography.h2, styles.tileLabel]}>
+              {t('home.call')}
+            </Text>
+          </Pressable>
+        )}
 
-        {/* SOS Button */}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('home.sos')}
-          accessibilityState={{ disabled: !flags.SOS_ENABLED }}
-          onPress={handleSOS}
-          style={[
-            styles.actionTile, 
-            styles.sosTile,
-            !flags.SOS_ENABLED && styles.disabledTile
-          ]}
-        >
-          <Text style={[typography.h2, styles.tileIcon]}>🚨</Text>
-          <Text style={[typography.h2, styles.tileLabel]}>
-            {t('home.sos')}
-          </Text>
-        </Pressable>
+        {/* SOS Button - Only show if enabled */}
+        {flags.SOS_ENABLED && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.sos')}
+            onPress={handleSOS}
+            style={[styles.actionTile, styles.sosTile]}
+          >
+            <Text style={[typography.h2, styles.tileIcon]}>🚨</Text>
+            <Text style={[typography.h2, styles.tileLabel]}>
+              {t('home.sos')}
+            </Text>
+          </Pressable>
+        )}
 
-        {/* Photos Button */}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('home.photos')}
-          accessibilityState={{ disabled: !flags.PHOTOS_ENABLED }}
-          onPress={handlePhotos}
-          style={[
-            styles.actionTile, 
-            styles.photosTile,
-            !flags.PHOTOS_ENABLED && styles.disabledTile
-          ]}
-        >
-          <Text style={[typography.h2, styles.tileIcon]}>📷</Text>
-          <Text style={[typography.h2, styles.tileLabel]}>
-            {t('home.photos')}
-          </Text>
-        </Pressable>
+        {/* Photos Button - Only show if enabled */}
+        {flags.PHOTOS_ENABLED && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.photos')}
+            onPress={handlePhotos}
+            style={[styles.actionTile, styles.photosTile]}
+          >
+            <Text style={[typography.h2, styles.tileIcon]}>📷</Text>
+            <Text style={[typography.h2, styles.tileLabel]}>
+              {t('home.photos')}
+            </Text>
+          </Pressable>
+        )}
+
+        {/* Show message if all features are disabled */}
+        {!flags.CALL_ENABLED && !flags.SOS_ENABLED && !flags.PHOTOS_ENABLED && (
+          <View style={styles.noFeaturesContainer}>
+            <Text style={[typography.h2, styles.noFeaturesIcon]}>⚙️</Text>
+            <Text style={[typography.h3, styles.noFeaturesText]}>
+              {t('home.noFeatures')}
+            </Text>
+            <Text style={[typography.body, styles.noFeaturesHint]}>
+              {t('home.noFeaturesHint')}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Hint Text */}
@@ -191,6 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.l,
     marginBottom: spacing.xl,
+    minHeight: 160, // Ensure minimum height even with fewer buttons
   },
   actionTile: {
     width: 160,
@@ -225,7 +238,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: 300,
   },
-  disabledTile: {
-    opacity: 0.5,
+  noFeaturesContainer: {
+    alignItems: 'center',
+    padding: spacing.xl,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    minWidth: 300,
+  },
+  noFeaturesIcon: {
+    fontSize: 48,
+    marginBottom: spacing.m,
+  },
+  noFeaturesText: {
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: spacing.s,
+  },
+  noFeaturesHint: {
+    color: colors.mutedText,
+    textAlign: 'center',
   },
 });
