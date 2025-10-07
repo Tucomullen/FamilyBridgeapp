@@ -1,0 +1,25 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "moduleResolution": "Node",
+    "allowJs": false,
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["jest"],
+    "baseUrl": "."
+  },
+  "include": [
+    "src/**/*",
+    "__tests__/**/*",
+    "types/**/*",
+    "App.tsx"
+  ]
+}
+
+

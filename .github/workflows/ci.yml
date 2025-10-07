@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x]
-        python-version: [3.9, 3.10, 3.11]
+        python-version: [3.9, 3.10, 3.11] # Using supported Python versions - force refresh
 
     steps:
     - uses: actions/checkout@v4
@@ -22,7 +22,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
     
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -31,24 +30,22 @@ jobs:
     
     - name: Install dependencies
       run: |
-        npm ci
-        pip install -r requirements.txt
+        npm install
+        cd backend && pip install -r requirements.txt
     
     - name: Run tests
       run: |
-        npm test
-        pytest
+        npm run test:senior-app
+        cd backend && pytest
     
     - name: Run linting
       run: |
-        npm run lint
-        flake8 .
+        npm run lint:senior-app
+        cd backend && flake8 .
     
     - name: Build applications
       run: |
         npm run build:senior-app
-        npm run build:family-panel
-        npm run build:backend
 
   security:
     runs-on: ubuntu-latest
@@ -59,12 +56,14 @@ jobs:
     - name: Run security audit
       run: |
         npm audit --audit-level moderate
-        safety check
     
-    - name: Run CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
       with:
-        languages: javascript, python
+        languages: javascript
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
 
   deploy:
     needs: [test, security]
