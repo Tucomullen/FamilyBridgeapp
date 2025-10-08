@@ -10,16 +10,10 @@
     "android": {
       "package": "com.familybridge.senior"
     },
-    "notification": {
-      "icon": "./assets/notification-icon.png",
-      "color": "#FF6B6B",
-      "iosDisplayInForeground": true
-    },
     "plugins": [
       [
         "expo-notifications",
         {
-          "icon": "./assets/notification-icon.png",
           "color": "#FF6B6B",
           "defaultChannel": "default"
         }

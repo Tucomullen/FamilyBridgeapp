@@ -1,4 +1,11 @@
-import * as Location from 'expo-location';
+// Conditional import for Expo Go compatibility
+let Location: any = null;
+try {
+  Location = require('expo-location');
+} catch (error) {
+  console.log('📍 expo-location not available in Expo Go');
+}
+
 import { Platform } from 'react-native';
 
 export type LocationPermissionStatus = 'granted' | 'denied' | 'unavailable';
@@ -36,6 +43,11 @@ class LocationService {
     try {
       console.log('📍 Requesting location permission...');
       
+      if (!Location) {
+        console.log('📍 Location not available in Expo Go');
+        return 'unavailable';
+      }
+      
       // Check if location services are enabled
       const isEnabled = await Location.hasServicesEnabledAsync();
       if (!isEnabled) {
@@ -64,6 +76,11 @@ class LocationService {
   async getLastKnownLocation(): Promise<LocationData | null> {
     try {
       console.log('📍 Getting last known location...');
+      
+      if (!Location) {
+        console.log('📍 Location not available in Expo Go');
+        return null;
+      }
       
       // Check if we have permission
       const { status } = await Location.getForegroundPermissionsAsync();
@@ -129,6 +146,11 @@ class LocationService {
   async getCurrentLocation(): Promise<LocationData | null> {
     try {
       console.log('📍 Getting current location...');
+      
+      if (!Location) {
+        console.log('📍 Location not available in Expo Go');
+        return null;
+      }
       
       // Check if we have permission
       const { status } = await Location.getForegroundPermissionsAsync();

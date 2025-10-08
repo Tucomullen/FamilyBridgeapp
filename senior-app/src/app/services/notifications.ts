@@ -1,4 +1,11 @@
-import * as Notifications from 'expo-notifications';
+// Conditional import for Expo Go compatibility
+let Notifications: any = null;
+try {
+  Notifications = require('expo-notifications');
+} catch (error) {
+  console.log('🔔 expo-notifications not available in Expo Go');
+}
+
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -16,14 +23,16 @@ export interface NotificationPayload {
   timestamp: number;
 }
 
-// Configure notification behavior
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+// Configure notification behavior (only if available)
+if (Notifications) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
 
 class NotificationService {
   private pushToken: string | null = null;
@@ -52,6 +61,11 @@ class NotificationService {
   async requestPermission(): Promise<NotificationPermissionStatus> {
     try {
       console.log('🔔 Requesting notification permission...');
+      
+      if (!Notifications) {
+        console.log('🔔 Notifications not available in Expo Go');
+        return 'unavailable';
+      }
       
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
@@ -113,6 +127,11 @@ class NotificationService {
     try {
       console.log('🔔 Sending dev notification with payload:', payload);
 
+      if (!Notifications) {
+        console.log('🔔 Notifications not available in Expo Go - simulating success');
+        return true; // Simulate success for Expo Go
+      }
+
       // For dev, we'll schedule a local notification
       const notificationId = await Notifications.scheduleNotificationAsync({
         content: {
@@ -137,12 +156,20 @@ class NotificationService {
     }
   }
 
-  onReceive(handler: (notification: Notifications.Notification) => void): () => void {
+  onReceive(handler: (notification: any) => void): () => void {
+    if (!Notifications) {
+      console.log('🔔 Notifications not available - returning no-op function');
+      return () => {};
+    }
     const subscription = Notifications.addNotificationReceivedListener(handler);
     return () => subscription.remove();
   }
 
-  onResponse(handler: (response: Notifications.NotificationResponse) => void): () => void {
+  onResponse(handler: (response: any) => void): () => void {
+    if (!Notifications) {
+      console.log('🔔 Notifications not available - returning no-op function');
+      return () => {};
+    }
     const subscription = Notifications.addNotificationResponseReceivedListener(handler);
     return () => subscription.remove();
   }
