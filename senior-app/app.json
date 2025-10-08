@@ -3,6 +3,37 @@
     "name": "FamilyBridge Senior",
     "slug": "familybridge-senior",
     "version": "0.1.0",
-    "platforms": ["ios", "android"]
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.familybridge.senior"
+    },
+    "android": {
+      "package": "com.familybridge.senior"
+    },
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#FF6B6B",
+      "iosDisplayInForeground": true
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#FF6B6B",
+          "defaultChannel": "default"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app needs access to location for emergency alerts.",
+          "locationAlwaysPermission": "This app needs access to location for emergency alerts.",
+          "locationWhenInUsePermission": "This app needs access to location for emergency alerts.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ]
+    ]
   }
 }

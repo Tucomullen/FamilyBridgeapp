@@ -1,7 +1,21 @@
 {
   "onb": {
     "welcome": { "title": "Bienvenido a FamilyBridge", "cta": "Comenzar" },
-    "perms": { "title": "Permitir cámara y micrófono", "body": "Los usamos para las llamadas.", "ctaAllow": "Permitir" },
+    "perms": { 
+      "title": "Permitir cámara y micrófono", 
+      "body": "Los usamos para las llamadas.", 
+      "ctaAllow": "Permitir" 
+    },
+    "sosConsent": {
+      "title": "Configuración de Emergencia SOS",
+      "body": "Para enviar alertas de emergencia, necesitamos permiso para enviar notificaciones y acceder a tu ubicación.",
+      "notifications": "Notificaciones: Enviar alertas de emergencia a tu familia",
+      "location": "Ubicación: Incluir tu ubicación en alertas de emergencia (opcional)",
+      "privacy": "Tus datos solo se usan para alertas de emergencia y no se comparten públicamente.",
+      "ctaAllow": "Permitir Todo",
+      "ctaSkip": "Omitir por Ahora",
+      "learnMore": "Aprende cómo habilitar más tarde"
+    },
     "link": { "title": "Vincular con tu familia", "body": "Escanea este código en el Panel Familiar", "ctaShowQR": "Mostrar QR", "codeLabel": "Tu código" },
     "done": { "title": "¡Listo!", "body": "Ya puedes usar FamilyBridge", "ctaHome": "Ir a Inicio" },
     "tts": { "play": "Leer en voz alta", "stop": "Detener" }
@@ -63,13 +77,27 @@
   "sos": {
     "title": "SOS",
     "placeholder": "Funcionalidad de emergencia próximamente",
+    "confirm": {
+      "title": "¿Enviar Alerta de Emergencia?",
+      "body": "Esto enviará una alerta de emergencia a tu familia con tu ubicación.",
+      "ctaSend": "Enviar Alerta Ahora",
+      "ctaCancel": "Cancelar"
+    },
     "cta": {
       "send": "Enviar Alerta",
       "retry": "Reintentar"
     },
     "status": {
-      "sent": "Alerta enviada a la familia",
-      "failed": "Error al enviar. Reintentar?"
+      "sending": "Enviando alerta de emergencia...",
+      "sent": "¡Alerta de emergencia enviada exitosamente!",
+      "failed": "Error al enviar alerta. ¿Reintentar?",
+      "noLocation": "Alerta enviada (ubicación no disponible)"
+    },
+    "dev": {
+      "title": "Registro de Notificaciones Dev",
+      "subtitle": "Alertas de emergencia recibidas en desarrollo",
+      "clear": "Limpiar Registro",
+      "noAlerts": "Aún no se han recibido alertas"
     }
   },
   "photos": {

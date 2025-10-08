@@ -69,10 +69,12 @@ export class WebRTCManager {
       }
     };
 
-    // Handle remote stream
-    (this.peerConnection as any).onaddstream = (event: any) => {
-      this.remoteStream = event.stream;
-      console.log('Remote stream added');
+    // Handle remote stream (modern approach)
+    (this.peerConnection as any).ontrack = (event: any) => {
+      if (event.streams && event.streams[0]) {
+        this.remoteStream = event.streams[0];
+        console.log('Remote stream added');
+      }
     };
 
     // Handle connection state changes
@@ -101,8 +103,12 @@ export class WebRTCManager {
         audio: config.enableAudio,
       });
 
-      // Add local stream to peer connection
-      (this.peerConnection as any)?.addStream(this.localStream);
+      // Add local stream tracks to peer connection (modern approach)
+      if (this.localStream && this.peerConnection) {
+        this.localStream.getTracks().forEach(track => {
+          this.peerConnection?.addTrack(track, this.localStream!);
+        });
+      }
 
       // Connect to signaling server
       this.connectSignaling();

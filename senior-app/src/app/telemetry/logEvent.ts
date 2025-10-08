@@ -8,9 +8,10 @@ export type TelemetryEvent =
   | 'call_error'
   | 'call_mute_toggle'
   | 'call_camera_switch'
-  | 'sos_send_attempt' 
+  | 'sos_requested'
   | 'sos_sent' 
-  | 'sos_retry'
+  | 'sos_failed'
+  | 'sos_received_dev'
   | 'photos_open' 
   | 'photos_next'
   | 'flag_toggle';

@@ -1,19 +1,25 @@
-import * as Localization from 'expo-localization';
 import es from './es.json';
 import en from './en.json';
 
 export type Locale = 'es' | 'en';
 
+// Type declarations for global objects
+declare const navigator: any;
+declare const global: any;
+
 const dictionaries = { es, en } as const;
 
-// Get device language using Expo Localization
+// Get device language - fallback implementation for Expo Go
 function getDeviceLanguage(): Locale {
   try {
-    // Get the device's locale (e.g., 'en-US', 'es-ES', 'en', 'es')
-    const deviceLocale = Localization.getLocales()[0]?.languageCode || 'en';
+    // Use browser/system language detection
+    if (typeof navigator !== 'undefined' && navigator.language) {
+      const browserLang = navigator.language.split('-')[0];
+      return browserLang === 'es' ? 'es' : 'en';
+    }
     
-    // Return supported locale or fallback to English
-    return deviceLocale === 'es' ? 'es' : 'en';
+    // Default fallback
+    return 'en';
   } catch (error) {
     console.warn('Failed to get device language, falling back to English:', error);
     return 'en';
@@ -48,30 +54,36 @@ export function getDeviceLanguageCode(): string {
 export function testLanguageDetection() {
   console.log('🧪 Testing Language Detection:');
 
-  // Test Spanish detection
-  const originalGetLocales = Localization.getLocales;
-  (Localization as any).getLocales = () => [{ languageCode: 'es' }];
+  // Test Spanish detection (simulate browser language)
+  const originalNavigator = global.navigator;
+  (global as any).navigator = { language: 'es-ES' };
   const spanishTest = getDeviceLanguage();
   console.log('  Spanish test:', spanishTest === 'es' ? '✅ PASS' : '❌ FAIL');
 
   // Test English detection
-  (Localization as any).getLocales = () => [{ languageCode: 'en' }];
+  (global as any).navigator = { language: 'en-US' };
   const englishTest = getDeviceLanguage();
   console.log('  English test:', englishTest === 'en' ? '✅ PASS' : '❌ FAIL');
 
   // Test fallback
-  (Localization as any).getLocales = () => [{ languageCode: 'fr' }];
+  (global as any).navigator = { language: 'fr-FR' };
   const fallbackTest = getDeviceLanguage();
   console.log('  Fallback test:', fallbackTest === 'en' ? '✅ PASS' : '❌ FAIL');
 
-  // Restore original function
-  (Localization as any).getLocales = originalGetLocales;
+  // Restore original navigator
+  (global as any).navigator = originalNavigator;
 }
 
 // Debug function to log language detection
 export function logLanguageInfo() {
   try {
-    const deviceLocale = Localization.getLocales()[0]?.languageCode || 'unknown';
+    let deviceLocale = 'unknown';
+    
+    // Get device locale from navigator language
+    if (typeof navigator !== 'undefined' && navigator.language) {
+      deviceLocale = navigator.language;
+    }
+    
     const detectedLanguage = getDeviceLanguage();
     console.log('🌍 Language Detection:', {
       deviceLocale,

@@ -1,7 +1,21 @@
 {
   "onb": {
     "welcome": { "title": "Welcome to FamilyBridge", "cta": "Start" },
-    "perms": { "title": "Allow camera and microphone", "body": "We use them for calls.", "ctaAllow": "Allow" },
+    "perms": { 
+      "title": "Allow camera and microphone", 
+      "body": "We use them for calls.", 
+      "ctaAllow": "Allow" 
+    },
+    "sosConsent": {
+      "title": "Emergency SOS Setup",
+      "body": "To send emergency alerts, we need permission to send notifications and access your location.",
+      "notifications": "Notifications: Send emergency alerts to your family",
+      "location": "Location: Include your location in emergency alerts (optional)",
+      "privacy": "Your data is only used for emergency alerts and is not shared publicly.",
+      "ctaAllow": "Allow All",
+      "ctaSkip": "Skip for Now",
+      "learnMore": "Learn how to enable later"
+    },
     "link": { "title": "Link with your family", "body": "Scan this code in the Family Panel", "ctaShowQR": "Show QR", "codeLabel": "Your code" },
     "done": { "title": "All set!", "body": "You're ready to use FamilyBridge", "ctaHome": "Go to Home" },
     "tts": { "play": "Read aloud", "stop": "Stop" }
@@ -63,13 +77,27 @@
   "sos": {
     "title": "SOS",
     "placeholder": "Emergency functionality coming soon",
+    "confirm": {
+      "title": "Send Emergency Alert?",
+      "body": "This will send an emergency alert to your family with your location.",
+      "ctaSend": "Send Alert Now",
+      "ctaCancel": "Cancel"
+    },
     "cta": {
       "send": "Send Alert",
       "retry": "Try Again"
     },
     "status": {
-      "sent": "Alert sent to family",
-      "failed": "Send failed. Try again?"
+      "sending": "Sending emergency alert...",
+      "sent": "Emergency alert sent successfully!",
+      "failed": "Failed to send alert. Try again?",
+      "noLocation": "Alert sent (no location available)"
+    },
+    "dev": {
+      "title": "Dev Notifications Log",
+      "subtitle": "Emergency alerts received in development",
+      "clear": "Clear Log",
+      "noAlerts": "No alerts received yet"
     }
   },
   "photos": {

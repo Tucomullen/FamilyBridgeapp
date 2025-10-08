@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
 import { speak } from '../lib/accessibility/tts';
@@ -36,7 +37,10 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     setFlags(featureFlags.getAllFlags());
   };
 
-  const title = t('home.title');
+  const title = t('home.title') || 'FamilyBridge';
+  
+  // Debug logging
+  console.log('SeniorHomeScreen render:', { title, flags });
   
   const handleCall = async () => {
     if (!flags.CALL_ENABLED) return;
@@ -74,6 +78,7 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     setTimeout(() => setTapCount(0), 2000);
   };
 
+
   return (
     <View style={styles.container}>
       {/* Header with TTS */}
@@ -82,12 +87,13 @@ export default function SeniorHomeScreen({ navigation }: Props) {
           accessibilityRole="button"
           accessibilityLabel={title}
           onPress={handleTitlePress}
+          style={styles.titleContainer}
         >
           <Text 
             accessibilityRole="header" 
-            style={[typography.h1, styles.title]}
+            style={styles.title}
           >
-            {title}
+            {title || 'FamilyBridge'}
           </Text>
         </Pressable>
         <Pressable
@@ -96,8 +102,8 @@ export default function SeniorHomeScreen({ navigation }: Props) {
           onPress={readTitle}
           style={styles.ttsButton}
         >
-          <Text style={[typography.body, styles.ttsText]}>
-            {t('home.tts.readTitle')}
+          <Text style={styles.ttsText}>
+            {t('home.tts.readTitle') || 'Read Title'}
           </Text>
         </Pressable>
       </View>
@@ -112,8 +118,8 @@ export default function SeniorHomeScreen({ navigation }: Props) {
             onPress={handleCall}
             style={[styles.actionTile, styles.callTile]}
           >
-            <Text style={[typography.h2, styles.tileIcon]}>📞</Text>
-            <Text style={[typography.h2, styles.tileLabel]}>
+            <Text style={styles.tileIcon}>📞</Text>
+            <Text style={styles.tileLabel}>
               {t('home.call')}
             </Text>
           </Pressable>
@@ -127,8 +133,8 @@ export default function SeniorHomeScreen({ navigation }: Props) {
             onPress={handleSOS}
             style={[styles.actionTile, styles.sosTile]}
           >
-            <Text style={[typography.h2, styles.tileIcon]}>🚨</Text>
-            <Text style={[typography.h2, styles.tileLabel]}>
+            <Text style={styles.tileIcon}>🚨</Text>
+            <Text style={styles.tileLabel}>
               {t('home.sos')}
             </Text>
           </Pressable>
@@ -142,8 +148,8 @@ export default function SeniorHomeScreen({ navigation }: Props) {
             onPress={handlePhotos}
             style={[styles.actionTile, styles.photosTile]}
           >
-            <Text style={[typography.h2, styles.tileIcon]}>📷</Text>
-            <Text style={[typography.h2, styles.tileLabel]}>
+            <Text style={styles.tileIcon}>📷</Text>
+            <Text style={styles.tileLabel}>
               {t('home.photos')}
             </Text>
           </Pressable>
@@ -152,11 +158,11 @@ export default function SeniorHomeScreen({ navigation }: Props) {
         {/* Show message if all features are disabled */}
         {!flags.CALL_ENABLED && !flags.SOS_ENABLED && !flags.PHOTOS_ENABLED && (
           <View style={styles.noFeaturesContainer}>
-            <Text style={[typography.h2, styles.noFeaturesIcon]}>⚙️</Text>
-            <Text style={[typography.h3, styles.noFeaturesText]}>
+            <Text style={styles.noFeaturesIcon}>⚙️</Text>
+            <Text style={styles.noFeaturesText}>
               {t('home.noFeatures')}
             </Text>
-            <Text style={[typography.body, styles.noFeaturesHint]}>
+            <Text style={styles.noFeaturesHint}>
               {t('home.noFeaturesHint')}
             </Text>
           </View>
@@ -164,9 +170,11 @@ export default function SeniorHomeScreen({ navigation }: Props) {
       </View>
 
       {/* Hint Text */}
-      <Text style={[typography.body, styles.hint]}>
-        {t('home.hint')}
-      </Text>
+      <View style={styles.hintContainer}>
+        <Text style={styles.hint}>
+          {t('home.hint')}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -175,45 +183,63 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.highContrastBg,
-    padding: spacing.l,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: spacing.l,
+    paddingTop: spacing.xl,
   },
   header: {
     alignItems: 'center',
     marginBottom: spacing.xl,
+    paddingHorizontal: spacing.m,
+  },
+  titleContainer: {
+    marginBottom: spacing.l,
   },
   title: {
     color: colors.text,
     textAlign: 'center',
-    marginBottom: spacing.m,
+    fontSize: 36,
+    fontWeight: 'bold',
+    letterSpacing: 1,
   },
   ttsButton: {
-    padding: spacing.m,
+    paddingVertical: spacing.s,
+    paddingHorizontal: spacing.m,
     backgroundColor: colors.surface,
-    borderRadius: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   ttsText: {
     color: colors.text,
+    fontSize: 16,
+    fontWeight: '500',
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    gap: spacing.l,
-    marginBottom: spacing.xl,
-    minHeight: 160, // Ensure minimum height even with fewer buttons
+    paddingVertical: spacing.l,
+    maxWidth: 400,
+    alignSelf: 'center',
+    width: '100%',
   },
   actionTile: {
-    width: 160,
-    height: 160,
-    borderRadius: 16,
+    width: '100%',
+    maxWidth: 280,
+    height: 120,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.l,
-    minWidth: 160,
-    minHeight: 160,
+    paddingVertical: spacing.l,
+    paddingHorizontal: spacing.m,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   callTile: {
     backgroundColor: colors.primary,
@@ -225,25 +251,35 @@ const styles = StyleSheet.create({
     backgroundColor: colors.success,
   },
   tileIcon: {
-    fontSize: 48,
-    marginBottom: spacing.m,
+    fontSize: 40,
+    marginBottom: spacing.s,
   },
   tileLabel: {
     color: colors.text,
     textAlign: 'center',
     fontWeight: '700',
+    fontSize: 20,
+    letterSpacing: 0.5,
+  },
+  hintContainer: {
+    paddingHorizontal: spacing.l,
+    paddingBottom: spacing.xl,
+    alignItems: 'center',
   },
   hint: {
     color: colors.mutedText,
     textAlign: 'center',
-    maxWidth: 300,
+    fontSize: 16,
+    lineHeight: 22,
+    maxWidth: 320,
   },
   noFeaturesContainer: {
     alignItems: 'center',
     padding: spacing.xl,
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    minWidth: 300,
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 300,
   },
   noFeaturesIcon: {
     fontSize: 48,
@@ -253,9 +289,12 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: 'center',
     marginBottom: spacing.s,
+    fontSize: 18,
+    fontWeight: '600',
   },
   noFeaturesHint: {
     color: colors.mutedText,
     textAlign: 'center',
+    fontSize: 14,
   },
 });

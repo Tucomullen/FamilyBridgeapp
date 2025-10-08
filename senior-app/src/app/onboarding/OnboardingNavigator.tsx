@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelcomeScreen from './WelcomeScreen';
 import PermissionScreen from './PermissionScreen';
+import SosConsentScreen from './SosConsentScreen';
 import FamilyLinkScreen from './FamilyLinkScreen';
 import ConfirmationScreen from './ConfirmationScreen';
 
@@ -14,6 +15,7 @@ export default function OnboardingNavigator({ onDone }: Props) {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="Permissions" component={PermissionScreen} />
+      <Stack.Screen name="SosConsent" component={SosConsentScreen} />
       <Stack.Screen name="FamilyLink" component={FamilyLinkScreen} />
       <Stack.Screen name="Confirmation">
         {() => <ConfirmationScreen onDone={onDone} />}
