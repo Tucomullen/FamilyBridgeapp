@@ -52,6 +52,8 @@
     <string>This app needs access to location for emergency alerts.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>This app needs to send emergency notifications to alert family members.</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

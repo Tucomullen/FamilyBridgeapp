@@ -56,7 +56,45 @@ jest.mock('expo-camera', () => ({
   Camera: {
     requestCameraPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
     requestMicrophonePermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+    getCameraPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+    isAvailableAsync: jest.fn(() => Promise.resolve(true)),
   },
+}));
+
+// Mock expo-image-picker
+jest.mock('expo-image-picker', () => ({
+  MediaTypeOptions: {
+    Images: 'Images',
+  },
+  requestMediaLibraryPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  getMediaLibraryPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  launchCameraAsync: jest.fn(() => Promise.resolve({
+    canceled: false,
+    assets: [{
+      uri: 'mock://camera-photo',
+      width: 300,
+      height: 300,
+      fileSize: 1000,
+    }],
+  })),
+  launchImageLibraryAsync: jest.fn(() => Promise.resolve({
+    canceled: false,
+    assets: [{
+      uri: 'mock://gallery-photo',
+      width: 300,
+      height: 300,
+      fileSize: 1000,
+    }],
+  })),
+}));
+
+// Mock expo-file-system
+jest.mock('expo-file-system', () => ({
+  documentDirectory: 'mock://documents/',
+  getInfoAsync: jest.fn(() => Promise.resolve({ exists: false })),
+  makeDirectoryAsync: jest.fn(() => Promise.resolve()),
+  copyAsync: jest.fn(() => Promise.resolve()),
+  deleteAsync: jest.fn(() => Promise.resolve()),
 }));
 
 // Mock expo-av

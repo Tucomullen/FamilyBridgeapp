@@ -68,14 +68,25 @@ class NotificationService {
       }
       
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      console.log('🔔 Current notification permission status:', existingStatus);
+      
       let finalStatus = existingStatus;
 
       if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
+        console.log('🔔 Requesting notification permissions...');
+        const { status } = await Notifications.requestPermissionsAsync({
+          ios: {
+            allowAlert: true,
+            allowBadge: true,
+            allowSound: true,
+            allowAnnouncements: true,
+          },
+        });
         finalStatus = status;
+        console.log('🔔 Permission request result:', finalStatus);
       }
 
-      console.log('🔔 Notification permission result:', finalStatus);
+      console.log('🔔 Final notification permission status:', finalStatus);
       
       if (finalStatus === 'granted') {
         await this.registerDevice();
@@ -130,6 +141,13 @@ class NotificationService {
       if (!Notifications) {
         console.log('🔔 Notifications not available in Expo Go - simulating success');
         return true; // Simulate success for Expo Go
+      }
+
+      // First, ensure we have notification permissions
+      const permissionStatus = await this.requestPermission();
+      if (permissionStatus !== 'granted') {
+        console.log('🔔 Notification permission not granted, cannot send notification');
+        return false;
       }
 
       // For dev, we'll schedule a local notification
