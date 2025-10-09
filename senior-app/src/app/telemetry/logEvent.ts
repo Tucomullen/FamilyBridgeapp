@@ -14,6 +14,12 @@ export type TelemetryEvent =
   | 'sos_received_dev'
   | 'photos_open' 
   | 'photos_next'
+  | 'photos_select'
+  | 'photos_take'
+  | 'photos_select_gallery'
+  | 'photos_share'
+  | 'photos_delete'
+  | 'sos_send_attempt'
   | 'flag_toggle';
 
 export interface TelemetryPayload {

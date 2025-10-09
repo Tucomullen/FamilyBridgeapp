@@ -51,18 +51,16 @@ export default function PhotosScreen({ navigation }: Props) {
     ];
 
     for (const mock of mockPhotos) {
-      const photo = photoService.createMockPhoto ? 
-        (photoService as any).createMockPhoto(mock.title) : 
-        {
-          id: `mock-${Date.now()}-${Math.random()}`,
-          uri: 'mock://photo',
-          title: mock.title,
-          timestamp: Date.now(),
-          size: 0,
-          width: 300,
-          height: 300,
-          isLocal: true,
-        };
+      const photo = {
+        id: `mock-${Date.now()}-${Math.random()}`,
+        uri: 'mock://photo',
+        title: mock.title,
+        timestamp: Date.now(),
+        size: 0,
+        width: 300,
+        height: 300,
+        isLocal: true,
+      };
       await photoService.addPhoto(photo);
     }
 
@@ -391,7 +389,7 @@ export default function PhotosScreen({ navigation }: Props) {
               onPress={deleteCurrentPhoto}
               style={{
                 padding: spacing.l,
-                backgroundColor: colors.error || '#FF6B6B',
+                backgroundColor: colors.danger || '#FF6B6B',
                 borderRadius: 12,
                 minWidth: 100,
                 alignItems: 'center',

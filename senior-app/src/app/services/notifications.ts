@@ -124,7 +124,9 @@ class NotificationService {
       });
 
       this.pushToken = token.data;
-      await AsyncStorage.setItem('pushToken', this.pushToken);
+      if (this.pushToken) {
+        await AsyncStorage.setItem('pushToken', this.pushToken);
+      }
       
       console.log('🔔 Device registered with token:', this.pushToken);
       return this.pushToken;
@@ -214,7 +216,7 @@ class NotificationService {
   }
 
   // For testing - get all scheduled notifications
-  async getScheduledNotifications(): Promise<Notifications.NotificationRequest[]> {
+  async getScheduledNotifications(): Promise<any[]> {
     try {
       return await Notifications.getAllScheduledNotificationsAsync();
     } catch (error) {

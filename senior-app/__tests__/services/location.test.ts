@@ -178,7 +178,7 @@ describe('LocationService', () => {
       
       // Mock a slow response that will timeout
       getLastKnownPositionAsync.mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 6000))
+        () => new Promise<void>(resolve => setTimeout(resolve, 6000))
       );
       
       const result = await locationService.getLastKnownLocation();
