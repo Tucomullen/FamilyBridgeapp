@@ -196,17 +196,17 @@ export default function DevApiScreen({ navigation }: Props) {
           </View>
 
           {serverStatus.responseTime && (
-            <Text style={[typography.caption, { color: colors.mutedText }]}>
+            <Text style={[typography.body, { color: colors.mutedText }]}>
               Response time: {serverStatus.responseTime}ms
             </Text>
           )}
 
-          <Text style={[typography.caption, { color: colors.mutedText }]}>
+          <Text style={[typography.body, { color: colors.mutedText }]}>
             Last check: {formatLastCheck(serverStatus.lastCheck)}
           </Text>
 
           {serverStatus.error && (
-            <Text style={[typography.caption, { color: colors.danger, marginTop: spacing.s }]}>
+            <Text style={[typography.body, { color: colors.danger, marginTop: spacing.s }]}>
               Error: {serverStatus.error}
             </Text>
           )}
@@ -233,7 +233,7 @@ export default function DevApiScreen({ navigation }: Props) {
           </View>
 
           {authState.user && (
-            <Text style={[typography.caption, { color: colors.mutedText }]}>
+            <Text style={[typography.body, { color: colors.mutedText }]}>
               User: {authState.user.name} ({authState.user.role})
             </Text>
           )}
@@ -340,15 +340,15 @@ export default function DevApiScreen({ navigation }: Props) {
             API Information
           </Text>
           
-          <Text style={[typography.caption, { color: colors.mutedText, marginBottom: spacing.s }]}>
+          <Text style={[typography.body, { color: colors.mutedText, marginBottom: spacing.s }]}>
             Base URL: {apiService.getBaseUrl()}
           </Text>
           
-          <Text style={[typography.caption, { color: colors.mutedText, marginBottom: spacing.s }]}>
+          <Text style={[typography.body, { color: colors.mutedText, marginBottom: spacing.s }]}>
             Status checks: Every 15 seconds
           </Text>
           
-          <Text style={[typography.caption, { color: colors.mutedText }]}>
+          <Text style={[typography.body, { color: colors.mutedText }]}>
             This is a development screen for testing API connectivity.
           </Text>
         </View>

@@ -28,7 +28,7 @@ class SyncService {
   private readonly SYNC_STATS_KEY = 'familybridge_sync_stats';
   private readonly MAX_RETRIES = 3;
   private readonly SYNC_INTERVAL = 30000; // 30 seconds
-  private syncInterval: NodeJS.Timeout | null = null;
+  private syncInterval: ReturnType<typeof setInterval> | null = null;
 
   async initialize(): Promise<void> {
     if (this.isInitialized) return;

@@ -46,7 +46,6 @@ class ApiService {
         'Content-Type': 'application/json',
         ...headers,
       },
-      timeout,
     };
 
     if (body && method !== 'GET') {
@@ -86,7 +85,7 @@ class ApiService {
         if (attempt < retries) {
           const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s...
           console.log(`⏳ Retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise<void>(resolve => setTimeout(resolve, delay));
         }
       }
     }
