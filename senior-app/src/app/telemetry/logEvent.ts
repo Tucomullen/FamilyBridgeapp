@@ -1,4 +1,6 @@
 import { featureFlags } from '../flags/featureFlags';
+import { authManager } from '../services/AuthManager';
+import { syncService } from '../services/SyncService';
 
 export type TelemetryEvent = 
   | 'call_start' 
@@ -39,9 +41,20 @@ export async function logEvent(name: TelemetryEvent, payload?: TelemetryPayload)
     sessionId: await getSessionId(),
   };
 
-  // For now, just log to console
-  // Later we can send to a real backend
+  // Log to console for debugging
   console.log('[TELEMETRY]', event);
+
+  // Send to backend if authenticated
+  try {
+    if (authManager.isAuthenticated()) {
+      await syncService.queueItem('telemetry', event);
+      console.log('📊 Telemetry event queued for sync');
+    } else {
+      console.log('📊 Not authenticated, telemetry event not queued');
+    }
+  } catch (error) {
+    console.error('📊 Failed to queue telemetry event:', error);
+  }
 }
 
 async function getSessionId(): Promise<string> {

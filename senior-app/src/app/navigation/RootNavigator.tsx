@@ -6,6 +6,7 @@ import CallScreen from '../screens/CallScreen';
 import SosScreen from '../screens/SosScreen';
 import PhotosScreen from '../screens/PhotosScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import DevApiScreen from '../screens/DevApiScreen';
 import DevNotificationsScreen from '../screens/DevNotificationsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -30,6 +31,7 @@ export default function RootNavigator() {
           <Stack.Screen name="Photos" component={PhotosScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           {__DEV__ && <Stack.Screen name="DevNotifications" component={DevNotificationsScreen} />}
+          {__DEV__ && <Stack.Screen name="DevApi" component={DevApiScreen} />}
         </>
       ) : (
         <Stack.Screen name="Onboarding">
