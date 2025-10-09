@@ -97,6 +97,16 @@ jest.mock('expo-file-system', () => ({
   deleteAsync: jest.fn(() => Promise.resolve()),
 }));
 
+// Mock expo-secure-store
+jest.mock('expo-secure-store', () => ({
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  setItemAsync: jest.fn(() => Promise.resolve()),
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
+}));
+
+// Mock fetch for API tests
+global.fetch = jest.fn();
+
 // Mock expo-av
 jest.mock('expo-av', () => ({
   Audio: {

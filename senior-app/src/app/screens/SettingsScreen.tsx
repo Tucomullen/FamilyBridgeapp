@@ -153,6 +153,19 @@ export default function SettingsScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.actions}>
+        {__DEV__ && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="API Development"
+            onPress={() => navigation.navigate('DevApi')}
+            style={[styles.button, { backgroundColor: colors.success }]}
+          >
+            <Text style={[typography.button, styles.buttonText]}>
+              🔧 API Development
+            </Text>
+          </Pressable>
+        )}
+
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('settings.reset')}
