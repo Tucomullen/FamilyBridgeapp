@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, Switch, ScrollView } from 'react-native';
+import { View, Text, Pressable, Switch, ScrollView, Alert } from 'react-native';
 import { colors, spacing, typography } from '../theme/colors';
 import { t, setLocale, getCurrentLocale, getDeviceLanguageCode, logLanguageInfo } from '../i18n';
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
+import { ttsService, Voice, TTSSettings } from '../services/tts';
 
 type Props = {
   navigation: any;
@@ -17,14 +18,40 @@ export default function SettingsScreen({ navigation }: Props) {
     TELEMETRY_ENABLED: true,
   });
   const [currentLanguage, setCurrentLanguage] = useState(getCurrentLocale());
+  const [ttsSettings, setTtsSettings] = useState<TTSSettings>({
+    voiceId: null,
+    rate: 1.0,
+    pitch: 1.0,
+    volume: 1.0,
+    voiceFeedbackEnabled: true,
+  });
+  const [availableVoices, setAvailableVoices] = useState<Voice[]>([]);
+  const [isTtsInitialized, setIsTtsInitialized] = useState(false);
 
   useEffect(() => {
     loadFlags();
+    initializeTTS();
   }, []);
 
   const loadFlags = async () => {
     await featureFlags.initialize();
     setFlags(featureFlags.getAllFlags());
+  };
+
+  const initializeTTS = async () => {
+    try {
+      await ttsService.initialize();
+      const settings = ttsService.getSettings();
+      const voices = ttsService.getVoices();
+      
+      setTtsSettings(settings);
+      setAvailableVoices(voices);
+      setIsTtsInitialized(true);
+      
+      console.log('🔊 TTS initialized in Settings');
+    } catch (error) {
+      console.error('🔊 Failed to initialize TTS in Settings:', error);
+    }
   };
 
   const toggleFlag = async (flag: FeatureFlag) => {
@@ -45,6 +72,77 @@ export default function SettingsScreen({ navigation }: Props) {
     setLocale(language);
     setCurrentLanguage(language);
     logLanguageInfo();
+  };
+
+  const handleVoiceChange = async (voiceId: string) => {
+    try {
+      await ttsService.setVoice(voiceId);
+      const settings = ttsService.getSettings();
+      setTtsSettings(settings);
+      await logEvent('tts_voice_changed', { voiceId });
+    } catch (error) {
+      console.error('🔊 Failed to change voice:', error);
+      Alert.alert('Error', 'No se pudo cambiar la voz');
+    }
+  };
+
+  const handleRateChange = async (rate: number) => {
+    try {
+      await ttsService.setRate(rate);
+      const settings = ttsService.getSettings();
+      setTtsSettings(settings);
+      await logEvent('tts_rate_changed', { rate });
+    } catch (error) {
+      console.error('🔊 Failed to change rate:', error);
+    }
+  };
+
+  const handlePitchChange = async (pitch: number) => {
+    try {
+      await ttsService.setPitch(pitch);
+      const settings = ttsService.getSettings();
+      setTtsSettings(settings);
+      await logEvent('tts_pitch_changed', { pitch });
+    } catch (error) {
+      console.error('🔊 Failed to change pitch:', error);
+    }
+  };
+
+  const handleVolumeChange = async (volume: number) => {
+    try {
+      await ttsService.setVolume(volume);
+      const settings = ttsService.getSettings();
+      setTtsSettings(settings);
+      await logEvent('tts_volume_changed', { volume });
+    } catch (error) {
+      console.error('🔊 Failed to change volume:', error);
+    }
+  };
+
+  const handleVoiceFeedbackToggle = async (enabled: boolean) => {
+    try {
+      await ttsService.setVoiceFeedbackEnabled(enabled);
+      const settings = ttsService.getSettings();
+      setTtsSettings(settings);
+      await logEvent('tts_feedback_toggled', { enabled });
+    } catch (error) {
+      console.error('🔊 Failed to toggle voice feedback:', error);
+    }
+  };
+
+  const testVoice = async () => {
+    try {
+      await ttsService.testVoice();
+      await logEvent('tts_test_voice');
+    } catch (error) {
+      console.error('🔊 Failed to test voice:', error);
+      Alert.alert('Error', 'No se pudo probar la voz');
+    }
+  };
+
+  const getCurrentVoiceName = (): string => {
+    const currentVoice = ttsService.getCurrentVoice();
+    return currentVoice ? currentVoice.name : t('settings.voice.defaultVoice');
   };
 
   return (
@@ -97,6 +195,114 @@ export default function SettingsScreen({ navigation }: Props) {
           </Pressable>
         </View>
       </View>
+
+      {/* Voice Settings */}
+      {isTtsInitialized && (
+        <View style={styles.section}>
+          <Text style={[typography.h2, styles.sectionTitle]}>
+            {t('settings.voice.title')}
+          </Text>
+
+          {/* Voice Selection */}
+          <View style={styles.voiceRow}>
+            <Text style={[typography.body, styles.voiceLabel]}>
+              {t('settings.voice.voice')}
+            </Text>
+            <Pressable
+              style={styles.voiceSelector}
+              onPress={() => {
+                // Show voice selection modal
+                Alert.alert(
+                  t('settings.voice.selectVoice'),
+                  '',
+                  availableVoices.map(voice => ({
+                    text: voice.name,
+                    onPress: async () => await handleVoiceChange(voice.id),
+                  })).concat([{ text: t('common.back'), onPress: async () => {} }])
+                );
+              }}
+            >
+              <Text style={[typography.body, styles.voiceSelectorText]}>
+                {getCurrentVoiceName()}
+              </Text>
+              <Text style={[typography.body, { color: colors.mutedText }]}>
+                ▼
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Speed Control */}
+          <View style={styles.voiceRow}>
+            <Text style={[typography.body, styles.voiceLabel]}>
+              {t('settings.voice.speed')}
+            </Text>
+            <View style={styles.sliderContainer}>
+              <Text style={[typography.body, { color: colors.mutedText, fontSize: 12 }]}>
+                {t('settings.voice.speedSlow')}
+              </Text>
+              <View style={styles.sliderRow}>
+                <Pressable
+                  style={styles.sliderButton}
+                  onPress={() => handleRateChange(0.5)}
+                >
+                  <Text style={[typography.body, { fontSize: 16 }]}>0.5x</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.sliderButton, ttsSettings.rate === 1.0 && styles.sliderButtonActive]}
+                  onPress={() => handleRateChange(1.0)}
+                >
+                  <Text style={[typography.body, { fontSize: 16 }]}>1.0x</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.sliderButton}
+                  onPress={() => handleRateChange(1.5)}
+                >
+                  <Text style={[typography.body, { fontSize: 16 }]}>1.5x</Text>
+                </Pressable>
+              </View>
+              <Text style={[typography.body, { color: colors.mutedText, fontSize: 12 }]}>
+                {t('settings.voice.speedFast')}
+              </Text>
+            </View>
+          </View>
+
+          {/* Test Voice Button */}
+          <Pressable
+            style={[styles.button, { backgroundColor: colors.primary, marginTop: spacing.m }]}
+            onPress={testVoice}
+          >
+            <Text style={[typography.button, { color: colors.text }]}>
+              {t('settings.voice.test')}
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {/* Accessibility Settings */}
+      {isTtsInitialized && (
+        <View style={styles.section}>
+          <Text style={[typography.h2, styles.sectionTitle]}>
+            {t('settings.accessibility.title')}
+          </Text>
+
+          <View style={styles.flagRow}>
+            <View style={styles.flagLabelContainer}>
+              <Text style={[typography.body, styles.flagLabel]}>
+                {t('settings.accessibility.voiceFeedback')}
+              </Text>
+              <Text style={[typography.body, { color: colors.mutedText, fontSize: 12 }]}>
+                {t('settings.accessibility.voiceFeedbackDesc')}
+              </Text>
+            </View>
+            <Switch
+              value={ttsSettings.voiceFeedbackEnabled}
+              onValueChange={handleVoiceFeedbackToggle}
+              trackColor={{ false: colors.surface, true: colors.primary }}
+              thumbColor={ttsSettings.voiceFeedbackEnabled ? colors.text : colors.mutedText}
+            />
+          </View>
+        </View>
+      )}
 
       <View style={styles.section}>
         <Text style={[typography.h2, styles.sectionTitle]}>
@@ -251,6 +457,58 @@ const styles = {
   flagLabel: {
     color: colors.text,
     flex: 1,
+  },
+  flagLabelContainer: {
+    flex: 1,
+  },
+  voiceRow: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    paddingVertical: spacing.m,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surface,
+  },
+  voiceLabel: {
+    color: colors.text,
+    flex: 1,
+  },
+  voiceSelector: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.m,
+    paddingVertical: spacing.s,
+    borderRadius: 8,
+    minHeight: 48,
+  },
+  voiceSelectorText: {
+    color: colors.text,
+    marginRight: spacing.s,
+  },
+  sliderContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    flex: 1,
+    justifyContent: 'space-between' as const,
+  },
+  sliderRow: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: spacing.s,
+  },
+  sliderButton: {
+    paddingHorizontal: spacing.m,
+    paddingVertical: spacing.s,
+    backgroundColor: colors.surface,
+    borderRadius: 6,
+    minHeight: 40,
+    minWidth: 50,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  sliderButtonActive: {
+    backgroundColor: colors.primary,
   },
   actions: {
     gap: spacing.m,

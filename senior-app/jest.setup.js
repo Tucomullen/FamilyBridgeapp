@@ -107,6 +107,15 @@ jest.mock('expo-secure-store', () => ({
 // Mock fetch for API tests
 global.fetch = jest.fn();
 
+// Mock expo-speech
+jest.mock('expo-speech', () => ({
+  getAvailableVoicesAsync: jest.fn(() => Promise.resolve([])),
+  speakAsync: jest.fn(() => Promise.resolve()),
+  pauseAsync: jest.fn(() => Promise.resolve()),
+  resumeAsync: jest.fn(() => Promise.resolve()),
+  stopAsync: jest.fn(() => Promise.resolve()),
+}));
+
 // Mock expo-av
 jest.mock('expo-av', () => ({
   Audio: {

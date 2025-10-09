@@ -97,6 +97,54 @@ npm run dev
 
 For detailed security information, see [apps/backend/SECURITY.md](apps/backend/SECURITY.md).
 
+## 🔊 Advanced TTS Features (Task 2.5)
+
+The FamilyBridge Senior App now includes comprehensive text-to-speech (TTS) capabilities designed specifically for senior users with accessibility needs.
+
+### Voice Features
+- **Multiple Voice Selection** - Choose from available system voices
+- **Speed Control** - Adjust speech rate from 0.5x to 1.5x
+- **Pitch Control** - Modify voice pitch for comfort
+- **Volume Control** - Fine-tune speech volume
+- **Language Detection** - Automatically selects appropriate voice based on device language
+
+### Spoken Feedback Integration
+- **Home Screen** - Announces button names when pressed ("Llamar", "Fotos", "SOS")
+- **SOS Screen** - Confirms emergency actions ("SOS activado", "Alerta enviada")
+- **Photos Screen** - Provides feedback for photo actions ("Foto tomada", "Foto compartida")
+- **Call Screen** - Announces call controls ("Micrófono activado", "Llamada finalizada")
+- **Settings Screen** - Voice testing and configuration
+
+### Accessibility Features
+- **WCAG 2.2 AA Compliance** - Meets accessibility standards
+- **VoiceOver/TalkBack Support** - Compatible with screen readers
+- **High Contrast UI** - Large touch targets (≥48px) and clear labels
+- **Voice Feedback Toggle** - Users can enable/disable spoken confirmations
+- **Error Handling** - Graceful fallbacks when TTS is unavailable
+
+### Testing TTS Features
+
+1. **Voice Settings**:
+   - Open Settings → Voice Settings
+   - Select preferred voice from dropdown
+   - Adjust speed, pitch, and volume
+   - Test voice with "Test Voice" button
+
+2. **Spoken Feedback**:
+   - Enable "Voice Feedback" in Settings → Accessibility
+   - Navigate through the app and press buttons
+   - Listen for spoken confirmations of actions
+
+3. **Simulator Testing**:
+   - iOS Simulator: TTS works with system voices
+   - Android Emulator: May require device for full TTS functionality
+   - Expo Go: Limited TTS support, use development build for full features
+
+### Voice Examples
+- **Spanish**: "Hola, soy tu asistente FamilyBridge. ¿Cómo estás hoy?"
+- **English**: "Hello, I am your FamilyBridge assistant. How are you today?"
+- **Action Confirmations**: "Foto tomada", "SOS activado", "Llamada iniciada"
+
 ## 🛠️ Tech Stack
 
 - **Frontend (Senior)**: React Native + Expo

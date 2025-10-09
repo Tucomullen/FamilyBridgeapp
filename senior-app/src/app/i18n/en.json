@@ -58,6 +58,33 @@
       "photos": "Photos",
       "telemetry": "Telemetry"
     },
+    "voice": {
+      "title": "Voice Settings",
+      "voice": "Voice",
+      "speed": "Speed",
+      "pitch": "Pitch",
+      "volume": "Volume",
+      "feedback": "Voice Feedback",
+      "feedbackDesc": "Hear voice confirmations for actions",
+      "test": "Test Voice",
+      "testText": "Hello, I am your FamilyBridge assistant.",
+      "selectVoice": "Select Voice",
+      "defaultVoice": "Default Voice",
+      "speedSlow": "Slow",
+      "speedNormal": "Normal",
+      "speedFast": "Fast",
+      "pitchLow": "Low",
+      "pitchNormal": "Normal",
+      "pitchHigh": "High",
+      "volumeQuiet": "Quiet",
+      "volumeNormal": "Normal",
+      "volumeLoud": "Loud"
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "voiceFeedback": "Voice Feedback",
+      "voiceFeedbackDesc": "Hear voice confirmations for important actions"
+    },
     "reset": "Reset"
   },
   "call": {
