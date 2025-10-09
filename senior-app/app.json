@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "FamilyBridge Senior",
+    "slug": "familybridge-senior",
+    "version": "0.1.0",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.familybridge.senior"
+    },
+    "android": {
+      "package": "com.familybridge.senior"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#FF6B6B",
+          "defaultChannel": "default"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app needs access to location for emergency alerts.",
+          "locationAlwaysPermission": "This app needs access to location for emergency alerts.",
+          "locationWhenInUsePermission": "This app needs access to location for emergency alerts.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "This app needs access to your photos to share memories with family.",
+          "cameraPermission": "This app needs access to your camera to take photos."
+        }
+      ]
+    ]
+  }
+}

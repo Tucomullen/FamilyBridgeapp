@@ -5,6 +5,8 @@ import SeniorHomeScreen from '../screens/SeniorHomeScreen';
 import CallScreen from '../screens/CallScreen';
 import SosScreen from '../screens/SosScreen';
 import PhotosScreen from '../screens/PhotosScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import DevNotificationsScreen from '../screens/DevNotificationsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
@@ -26,6 +28,8 @@ export default function RootNavigator() {
           <Stack.Screen name="Call" component={CallScreen} />
           <Stack.Screen name="SOS" component={SosScreen} />
           <Stack.Screen name="Photos" component={PhotosScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          {__DEV__ && <Stack.Screen name="DevNotifications" component={DevNotificationsScreen} />}
         </>
       ) : (
         <Stack.Screen name="Onboarding">
