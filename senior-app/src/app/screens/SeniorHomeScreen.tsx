@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
-import { speak } from '../lib/accessibility/tts';
+import { ttsService } from '../services/tts';
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
 
@@ -22,6 +22,7 @@ export default function SeniorHomeScreen({ navigation }: Props) {
 
   useEffect(() => {
     loadFlags();
+    initializeTTS();
   }, []);
 
   // Refresh flags when screen comes into focus (e.g., returning from settings)
@@ -37,6 +38,15 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     setFlags(featureFlags.getAllFlags());
   };
 
+  const initializeTTS = async () => {
+    try {
+      await ttsService.initialize();
+      console.log('🔊 TTS initialized in SeniorHomeScreen');
+    } catch (error) {
+      console.error('🔊 Failed to initialize TTS in SeniorHomeScreen:', error);
+    }
+  };
+
   const title = t('home.title') || 'FamilyBridge';
   
   // Debug logging
@@ -44,24 +54,27 @@ export default function SeniorHomeScreen({ navigation }: Props) {
   
   const handleCall = async () => {
     if (!flags.CALL_ENABLED) return;
-    await logEvent('photos_open');
+    await logEvent('call_open');
+    await ttsService.speak(t('home.call'));
     navigation.navigate('Call');
   };
 
   const handleSOS = async () => {
     if (!flags.SOS_ENABLED) return;
     await logEvent('sos_send_attempt');
+    await ttsService.speak(t('home.sos'));
     navigation.navigate('SOS');
   };
 
   const handlePhotos = async () => {
     if (!flags.PHOTOS_ENABLED) return;
     await logEvent('photos_open');
+    await ttsService.speak(t('home.photos'));
     navigation.navigate('Photos');
   };
 
   const readTitle = () => {
-    speak(title);
+    ttsService.speak(title);
   };
 
   const handleTitlePress = () => {

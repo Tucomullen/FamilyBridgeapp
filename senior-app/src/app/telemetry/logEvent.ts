@@ -10,10 +10,12 @@ export type TelemetryEvent =
   | 'call_error'
   | 'call_mute_toggle'
   | 'call_camera_switch'
+  | 'call_open'
   | 'sos_requested'
   | 'sos_sent' 
   | 'sos_failed'
   | 'sos_received_dev'
+  | 'sos_send_attempt'
   | 'photos_open' 
   | 'photos_next'
   | 'photos_select'
@@ -21,7 +23,12 @@ export type TelemetryEvent =
   | 'photos_select_gallery'
   | 'photos_share'
   | 'photos_delete'
-  | 'sos_send_attempt'
+  | 'tts_voice_changed'
+  | 'tts_rate_changed'
+  | 'tts_pitch_changed'
+  | 'tts_volume_changed'
+  | 'tts_feedback_toggled'
+  | 'tts_test_voice'
   | 'flag_toggle';
 
 export interface TelemetryPayload {

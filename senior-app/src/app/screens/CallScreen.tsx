@@ -5,6 +5,7 @@ import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
 import { useCall } from '../hooks/useCall';
 import { CallState, CallQuality } from '../types/call';
+import { ttsService } from '../services/tts';
 
 type Props = {
   navigation: any;
@@ -27,6 +28,18 @@ export default function CallScreen({ navigation }: Props) {
   const [roomId] = useState('test-room'); // For testing
 
   useEffect(() => {
+    // Initialize TTS
+    const initTTS = async () => {
+      try {
+        await ttsService.initialize();
+        console.log('🔊 TTS initialized in CallScreen');
+      } catch (error) {
+        console.error('🔊 Failed to initialize TTS in CallScreen:', error);
+      }
+    };
+    
+    initTTS();
+    
     // Auto-start call for testing
     startCall(roomId, true);
   }, [roomId, startCall]);
@@ -125,7 +138,10 @@ export default function CallScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={isMuted ? 'Unmute' : 'Mute'}
-              onPress={toggleMute}
+              onPress={async () => {
+                toggleMute();
+                await ttsService.speak(isMuted ? 'Micrófono activado' : 'Micrófono silenciado');
+              }}
               style={[styles.controlButton, isMuted && styles.controlButtonActive]}
             >
               <Text style={[typography.h2, styles.controlButtonText]}>
@@ -137,7 +153,10 @@ export default function CallScreen({ navigation }: Props) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Switch Camera"
-              onPress={switchCamera}
+              onPress={async () => {
+                switchCamera();
+                await ttsService.speak('Cámara cambiada');
+              }}
               style={styles.controlButton}
             >
               <Text style={[typography.h2, styles.controlButtonText]}>
@@ -151,7 +170,10 @@ export default function CallScreen({ navigation }: Props) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="End Call"
-          onPress={endCall}
+          onPress={async () => {
+            endCall();
+            await ttsService.speak('Llamada finalizada');
+          }}
           style={[styles.controlButton, styles.endCallButton]}
         >
           <Text style={[typography.h2, styles.controlButtonText]}>

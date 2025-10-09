@@ -5,6 +5,7 @@ import { t } from '../i18n';
 import { logEvent } from '../telemetry/logEvent';
 import { notificationService, NotificationPayload } from '../services/notifications';
 import { locationService } from '../services/location';
+import { ttsService } from '../services/tts';
 import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
@@ -24,18 +25,20 @@ export default function SosScreen({ navigation }: Props) {
       try {
         await notificationService.initialize();
         await locationService.initialize();
+        await ttsService.initialize();
         console.log('🚨 SOS Screen: Services initialized');
       } catch (error) {
         console.error('🚨 SOS Screen: Failed to initialize services:', error);
       }
     };
-    
+
     initServices();
   }, []);
 
-  const handleSosPress = () => {
+  const handleSosPress = async () => {
     setSosState('confirming');
     setShowConfirmModal(true);
+    await ttsService.speak('SOS activado');
   };
 
   const sendAlert = async () => {
@@ -87,12 +90,18 @@ export default function SosScreen({ navigation }: Props) {
         if (Vibration.vibrate) {
           Vibration.vibrate([0, 500, 200, 500]); // Success pattern
         }
+        
+        // Speak confirmation
+        await ttsService.speak('Alerta de emergencia enviada');
       } else {
         setSosState('failed');
         await logEvent('sos_failed', { 
           locationAttached: !!location,
           hasToken: !!payload.pushToken 
         });
+        
+        // Speak error
+        await ttsService.speak('Error al enviar alerta');
       }
     } catch (error) {
       console.error('🚨 SOS: Failed to send alert:', error);

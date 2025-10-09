@@ -5,6 +5,7 @@ import { t } from '../i18n';
 import { logEvent } from '../telemetry/logEvent';
 import { photoService, Photo } from '../services/PhotoService';
 import { cameraManager } from '../services/CameraManager';
+import { ttsService } from '../services/tts';
 
 type Props = {
   navigation: any;
@@ -18,6 +19,7 @@ export default function PhotosScreen({ navigation }: Props) {
 
   useEffect(() => {
     initializePhotos();
+    initializeTTS();
   }, []);
 
   const initializePhotos = async () => {
@@ -26,17 +28,26 @@ export default function PhotosScreen({ navigation }: Props) {
       await cameraManager.initialize();
       const allPhotos = photoService.getAllPhotos();
       setPhotos(allPhotos);
-      
+
       // If no photos, add some mock photos for demonstration
       if (allPhotos.length === 0) {
         await addMockPhotos();
       }
-      
+
       setIsLoading(false);
       console.log('📷 PhotosScreen initialized with', allPhotos.length, 'photos');
     } catch (error) {
       console.error('📷 Failed to initialize photos:', error);
       setIsLoading(false);
+    }
+  };
+
+  const initializeTTS = async () => {
+    try {
+      await ttsService.initialize();
+      console.log('🔊 TTS initialized in PhotosScreen');
+    } catch (error) {
+      console.error('🔊 Failed to initialize TTS in PhotosScreen:', error);
     }
   };
 
@@ -90,6 +101,7 @@ export default function PhotosScreen({ navigation }: Props) {
         setPhotos(updatedPhotos);
         setCurrentIndex(0); // Show the new photo
         await logEvent('photos_take', { photoId: photo.id });
+        await ttsService.speak('Foto tomada');
         Alert.alert('¡Éxito!', 'Foto tomada correctamente');
       } else {
         Alert.alert('Error', 'No se pudo tomar la foto');
@@ -112,6 +124,7 @@ export default function PhotosScreen({ navigation }: Props) {
         setPhotos(updatedPhotos);
         setCurrentIndex(0); // Show the new photo
         await logEvent('photos_select_gallery', { photoId: photo.id });
+        await ttsService.speak('Foto seleccionada');
         Alert.alert('¡Éxito!', 'Foto seleccionada correctamente');
       } else {
         Alert.alert('Error', 'No se pudo seleccionar la foto');
@@ -138,6 +151,7 @@ export default function PhotosScreen({ navigation }: Props) {
       
       if (result.action === Share.sharedAction) {
         await logEvent('photos_share', { photoId: currentPhoto.id, method: result.activityType || 'unknown' });
+        await ttsService.speak('Foto compartida');
         console.log('📷 Photo shared successfully');
       } else if (result.action === Share.dismissedAction) {
         console.log('📷 Photo sharing dismissed');
@@ -174,6 +188,7 @@ export default function PhotosScreen({ navigation }: Props) {
               }
               
               await logEvent('photos_delete', { photoId: currentPhoto.id });
+              await ttsService.speak('Foto eliminada');
               Alert.alert('¡Éxito!', 'Foto eliminada correctamente');
             } else {
               Alert.alert('Error', 'No se pudo eliminar la foto');
