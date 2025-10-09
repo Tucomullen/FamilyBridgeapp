@@ -25,10 +25,17 @@ class LocationService {
     if (this.isInitialized) return;
     
     try {
+      if (!Location) {
+        console.log('📍 Location not available in Expo Go');
+        this.isInitialized = true; // Mark as initialized even if not available
+        return;
+      }
+      
       // Check if location services are enabled
       const isEnabled = await Location.hasServicesEnabledAsync();
       if (!isEnabled) {
         console.log('📍 Location services are disabled');
+        this.isInitialized = true; // Mark as initialized even if not available
         return;
       }
 
@@ -36,6 +43,7 @@ class LocationService {
       console.log('📍 LocationService initialized');
     } catch (error) {
       console.error('📍 Failed to initialize LocationService:', error);
+      this.isInitialized = true; // Mark as initialized even if there's an error
     }
   }
 

@@ -179,6 +179,11 @@ class NotificationService {
   }
 
   private setupNotificationListeners(): void {
+    if (!Notifications) {
+      console.log('🔔 Notifications not available - skipping listener setup');
+      return;
+    }
+    
     // Listen for notifications received while app is in foreground
     this.onReceive((notification) => {
       console.log('🔔 Notification received:', notification);
