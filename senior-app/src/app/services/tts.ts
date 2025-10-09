@@ -239,7 +239,41 @@ class TTSService {
       };
 
       this.currentUtterance = utterance;
-      await (Speech as any).speakAsync(utterance);
+      await Speech.speak(text, {
+        voice: voiceId || undefined,
+        rate: Math.max(0.1, Math.min(2.0, rate)),
+        pitch: Math.max(0.1, Math.min(2.0, pitch)),
+        volume: Math.max(0.0, Math.min(1.0, volume)),
+        language: options.language || getCurrentLocale(),
+        onStart: () => {
+          this.isSpeaking = true;
+          this.isPaused = false;
+          this.errorCount = 0;
+          console.log('🔊 Speech started:', text.substring(0, 50) + '...');
+          options.onStart?.();
+        },
+        onDone: () => {
+          this.isSpeaking = false;
+          this.isPaused = false;
+          console.log('🔊 Speech completed');
+          options.onDone?.();
+        },
+        onError: (error: Error) => {
+          this.isSpeaking = false;
+          this.isPaused = false;
+          this.errorCount++;
+          console.error('🔊 Speech error:', error);
+          
+          // Disable voice feedback after too many errors
+          if (this.errorCount >= this.MAX_ERRORS) {
+            this.currentSettings.voiceFeedbackEnabled = false;
+            this.saveSettings();
+            console.warn('🔊 Disabled voice feedback due to repeated errors');
+          }
+          
+          options.onError?.(error);
+        },
+      });
       
     } catch (error) {
       console.error('🔊 Failed to speak text:', error);
@@ -260,7 +294,7 @@ class TTSService {
     if (!this.isSpeaking || this.isPaused) return;
 
     try {
-      await (Speech as any).pauseAsync();
+      await Speech.pause();
       this.isPaused = true;
       console.log('🔊 Speech paused');
     } catch (error) {
@@ -275,7 +309,7 @@ class TTSService {
     if (!this.isSpeaking || !this.isPaused) return;
 
     try {
-      await (Speech as any).resumeAsync();
+      await Speech.resume();
       this.isPaused = false;
       console.log('🔊 Speech resumed');
     } catch (error) {
@@ -290,7 +324,7 @@ class TTSService {
     if (!this.isSpeaking) return;
 
     try {
-      await (Speech as any).stopAsync();
+      await Speech.stop();
       this.isSpeaking = false;
       this.isPaused = false;
       this.currentUtterance = null;

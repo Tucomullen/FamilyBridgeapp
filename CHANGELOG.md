@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Voice Commands (Task 2.6)**
+  - Push-to-talk voice command system for senior-friendly navigation
+  - Bilingual support for Spanish (es-ES) and English (en-US) recognition
+  - Simple command grammar: call contacts, view photos, emergency, navigation
+  - Large, accessible voice command button with clear visual feedback
+  - TTS confirmations and error messages for all voice interactions
+  - Voice commands toggle in Settings → Accessibility
+  - On-device speech recognition with privacy-first approach
+  - Voice command access via 🎤 button on home screen
+  - Comprehensive unit tests for voice recognition and intent parsing
+
 - **Advanced TTS Features (Task 2.5)**
   - Comprehensive text-to-speech service with voice selection and controls
   - Multiple voice support with automatic language detection

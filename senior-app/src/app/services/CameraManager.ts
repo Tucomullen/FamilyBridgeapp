@@ -48,9 +48,9 @@ class CameraManager {
         return;
       }
 
-      // Check if camera is available on device
-      const isAvailable = await Camera.isAvailableAsync();
-      if (!isAvailable) {
+      // Check if camera is available on device by requesting permissions
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
         console.log('📷 Camera not available on this device');
         this.isInitialized = true;
         return;
@@ -180,7 +180,8 @@ class CameraManager {
   async isCameraAvailable(): Promise<boolean> {
     try {
       if (!Camera) return false;
-      return await Camera.isAvailableAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      return status === 'granted';
     } catch (error) {
       console.error('📷 Failed to check camera availability:', error);
       return false;
@@ -194,9 +195,9 @@ class CameraManager {
       
       const types: CameraType[] = ['back'];
       
-      // Check if front camera is available
-      const hasFrontCamera = await Camera.isAvailableAsync();
-      if (hasFrontCamera) {
+      // Check if front camera is available by checking permissions
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status === 'granted') {
         types.push('front');
       }
       

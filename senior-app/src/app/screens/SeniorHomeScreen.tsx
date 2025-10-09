@@ -19,16 +19,19 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     TELEMETRY_ENABLED: true,
   });
   const [tapCount, setTapCount] = useState(0);
+  const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
 
   useEffect(() => {
     loadFlags();
     initializeTTS();
+    loadVoiceCommandsSetting();
   }, []);
 
   // Refresh flags when screen comes into focus (e.g., returning from settings)
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadFlags();
+      loadVoiceCommandsSetting();
     });
     return unsubscribe;
   }, [navigation]);
@@ -44,6 +47,15 @@ export default function SeniorHomeScreen({ navigation }: Props) {
       console.log('🔊 TTS initialized in SeniorHomeScreen');
     } catch (error) {
       console.error('🔊 Failed to initialize TTS in SeniorHomeScreen:', error);
+    }
+  };
+
+  const loadVoiceCommandsSetting = async () => {
+    try {
+      const enabled = await AsyncStorage.getItem('voice_commands_enabled');
+      setVoiceCommandsEnabled(enabled !== 'false'); // Default to true
+    } catch (error) {
+      console.error('Failed to load voice commands setting:', error);
     }
   };
 
@@ -91,10 +103,17 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     setTimeout(() => setTapCount(0), 2000);
   };
 
+  const handleVoiceCommands = async () => {
+    if (!voiceCommandsEnabled) return;
+    await logEvent('voice_commands_open');
+    await ttsService.speak(t('home.voiceCommands') || 'Voice Commands');
+    navigation.navigate('Voice');
+  };
+
 
   return (
     <View style={styles.container}>
-      {/* Header with TTS */}
+      {/* Header with TTS and Voice Commands */}
       <View style={styles.header}>
         <Pressable
           accessibilityRole="button"
@@ -109,16 +128,28 @@ export default function SeniorHomeScreen({ navigation }: Props) {
             {title || 'FamilyBridge'}
           </Text>
         </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('home.tts.readTitle')}
-          onPress={readTitle}
-          style={styles.ttsButton}
-        >
-          <Text style={styles.ttsText}>
-            {t('home.tts.readTitle') || 'Read Title'}
-          </Text>
-        </Pressable>
+        <View style={styles.headerButtons}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.tts.readTitle')}
+            onPress={readTitle}
+            style={styles.headerButton}
+          >
+            <Text style={styles.headerButtonText}>
+              {t('home.tts.readTitle') || 'Read Title'}
+            </Text>
+          </Pressable>
+          {voiceCommandsEnabled && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('home.voiceCommands') || 'Voice Commands'}
+              onPress={handleVoiceCommands}
+              style={[styles.headerButton, styles.voiceButton]}
+            >
+              <Text style={styles.headerButtonText}>🎤</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
 
       {/* Main Action Grid */}
@@ -214,7 +245,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 1,
   },
-  ttsButton: {
+  headerButtons: {
+    flexDirection: 'row',
+    gap: spacing.m,
+    alignItems: 'center',
+  },
+  headerButton: {
     paddingVertical: spacing.s,
     paddingHorizontal: spacing.m,
     backgroundColor: colors.surface,
@@ -222,7 +258,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  ttsText: {
+  voiceButton: {
+    backgroundColor: colors.primary,
+  },
+  headerButtonText: {
     color: colors.text,
     fontSize: 16,
     fontWeight: '500',

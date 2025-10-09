@@ -29,6 +29,10 @@ export type TelemetryEvent =
   | 'tts_volume_changed'
   | 'tts_feedback_toggled'
   | 'tts_test_voice'
+  | 'voice_commands_open'
+  | 'voice_commands_toggled'
+  | 'voice_command_recognized'
+  | 'voice_command_executed'
   | 'flag_toggle';
 
 export interface TelemetryPayload {
