@@ -85,7 +85,7 @@ class PhotoService {
         return 'unavailable';
       }
       
-      const { status: existingStatus } = await Camera.getCameraPermissionsAsync();
+      const { status: existingStatus } = await Camera.requestCameraPermissionsAsync();
       console.log('📷 Current camera permission status:', existingStatus);
       
       let finalStatus = existingStatus;
