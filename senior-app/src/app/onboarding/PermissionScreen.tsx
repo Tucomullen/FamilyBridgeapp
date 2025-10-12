@@ -9,11 +9,16 @@ export default function PermissionScreen({ navigation }: any) {
   const [state, setState] = useState<PermissionState | null>(null);
 
   async function allow() {
+    console.log('🔐 Starting permission request...');
     const cam = await requestCamera();
     const mic = await requestMicrophone();
+    console.log('🔐 Permission results:', { camera: cam, microphone: mic });
+    
     if (cam === 'granted' && mic === 'granted') {
-      navigation.navigate('FamilyLink');
+      console.log('✅ All permissions granted, navigating to SOS consent');
+      navigation.navigate('SosConsent');
     } else {
+      console.log('❌ Some permissions denied:', { camera: cam, microphone: mic });
       setState('denied');
     }
   }

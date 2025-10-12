@@ -3,6 +3,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import RootNavigator from './src/app/navigation/RootNavigator';
 import { colors } from './src/app/theme/colors';
 import { StatusBar } from 'react-native';
+import { logLanguageInfo, testLanguageDetection } from './src/app/i18n';
 
 const navTheme = {
   ...DefaultTheme,
@@ -15,6 +16,14 @@ const navTheme = {
 };
 
 export default function App() {
+  useEffect(() => {
+    // Test language detection
+    testLanguageDetection();
+    
+    // Log language detection on app startup
+    logLanguageInfo();
+  }, []);
+
   return (
     <NavigationContainer theme={navTheme}>
       <StatusBar barStyle="light-content" />

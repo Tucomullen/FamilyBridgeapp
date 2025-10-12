@@ -1,7 +1,21 @@
 {
   "onb": {
     "welcome": { "title": "Bienvenido a FamilyBridge", "cta": "Comenzar" },
-    "perms": { "title": "Permitir cámara y micrófono", "body": "Los usamos para las llamadas.", "ctaAllow": "Permitir" },
+    "perms": { 
+      "title": "Permitir cámara y micrófono", 
+      "body": "Los usamos para las llamadas.", 
+      "ctaAllow": "Permitir" 
+    },
+    "sosConsent": {
+      "title": "Configuración de Emergencia SOS",
+      "body": "Para enviar alertas de emergencia, necesitamos permiso para enviar notificaciones y acceder a tu ubicación.",
+      "notifications": "Notificaciones: Enviar alertas de emergencia a tu familia",
+      "location": "Ubicación: Incluir tu ubicación en alertas de emergencia (opcional)",
+      "privacy": "Tus datos solo se usan para alertas de emergencia y no se comparten públicamente.",
+      "ctaAllow": "Permitir Todo",
+      "ctaSkip": "Omitir por Ahora",
+      "learnMore": "Aprende cómo habilitar más tarde"
+    },
     "link": { "title": "Vincular con tu familia", "body": "Escanea este código en el Panel Familiar", "ctaShowQR": "Mostrar QR", "codeLabel": "Tu código" },
     "done": { "title": "¡Listo!", "body": "Ya puedes usar FamilyBridge", "ctaHome": "Ir a Inicio" },
     "tts": { "play": "Leer en voz alta", "stop": "Detener" }
@@ -12,7 +26,9 @@
     "sos": "SOS",
     "photos": "Fotos",
     "hint": "Toca cualquier botón para comenzar",
-    "tts": { "readTitle": "Leer título" }
+    "tts": { "readTitle": "Leer título" },
+    "noFeatures": "Sin características habilitadas",
+    "noFeaturesHint": "Ve a Configuración para habilitar características"
   },
   "call": {
     "title": "Llamar",
@@ -31,12 +47,43 @@
   },
   "settings": {
     "title": "Configuración",
+    "language": {
+      "title": "Idioma",
+      "device": "Dispositivo detectado"
+    },
     "features": "Características",
     "flags": {
       "call": "Llamadas",
       "sos": "SOS",
       "photos": "Fotos",
       "telemetry": "Telemetría"
+    },
+    "voice": {
+      "title": "Configuración de Voz",
+      "voice": "Voz",
+      "speed": "Velocidad",
+      "pitch": "Tono",
+      "volume": "Volumen",
+      "feedback": "Retroalimentación de Voz",
+      "feedbackDesc": "Escuchar confirmaciones de voz para acciones",
+      "test": "Probar Voz",
+      "testText": "Hola, soy tu asistente FamilyBridge.",
+      "selectVoice": "Seleccionar Voz",
+      "defaultVoice": "Voz por Defecto",
+      "speedSlow": "Lenta",
+      "speedNormal": "Normal",
+      "speedFast": "Rápida",
+      "pitchLow": "Bajo",
+      "pitchNormal": "Normal",
+      "pitchHigh": "Alto",
+      "volumeQuiet": "Bajo",
+      "volumeNormal": "Normal",
+      "volumeLoud": "Alto"
+    },
+    "accessibility": {
+      "title": "Accesibilidad",
+      "voiceFeedback": "Retroalimentación de Voz",
+      "voiceFeedbackDesc": "Escuchar confirmaciones de voz para acciones importantes"
     },
     "reset": "Restablecer"
   },
@@ -57,13 +104,27 @@
   "sos": {
     "title": "SOS",
     "placeholder": "Funcionalidad de emergencia próximamente",
+    "confirm": {
+      "title": "¿Enviar Alerta de Emergencia?",
+      "body": "Esto enviará una alerta de emergencia a tu familia con tu ubicación.",
+      "ctaSend": "Enviar Alerta Ahora",
+      "ctaCancel": "Cancelar"
+    },
     "cta": {
       "send": "Enviar Alerta",
       "retry": "Reintentar"
     },
     "status": {
-      "sent": "Alerta enviada a la familia",
-      "failed": "Error al enviar. Reintentar?"
+      "sending": "Enviando alerta de emergencia...",
+      "sent": "¡Alerta de emergencia enviada exitosamente!",
+      "failed": "Error al enviar alerta. ¿Reintentar?",
+      "noLocation": "Alerta enviada (ubicación no disponible)"
+    },
+    "dev": {
+      "title": "Registro de Notificaciones Dev",
+      "subtitle": "Alertas de emergencia recibidas en desarrollo",
+      "clear": "Limpiar Registro",
+      "noAlerts": "Aún no se han recibido alertas"
     }
   },
   "photos": {

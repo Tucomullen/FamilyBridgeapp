@@ -1,0 +1,7 @@
+
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" fill="#1a1a1a"/>
+  <circle cx="16" cy="12" r="4" fill="#4CAF50"/>
+  <path d="M16 18c-2.5 0-4.5 1.5-5.5 3.5h11c-1-2-3-3.5-5.5-3.5z" fill="#4CAF50"/>
+  <text x="16" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="white">FB</text>
+</svg>
