@@ -5,6 +5,7 @@ import { t, setLocale, getCurrentLocale, getDeviceLanguageCode, logLanguageInfo 
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
 import { ttsService, Voice, TTSSettings } from '../services/tts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {
   navigation: any;
@@ -27,10 +28,12 @@ export default function SettingsScreen({ navigation }: Props) {
   });
   const [availableVoices, setAvailableVoices] = useState<Voice[]>([]);
   const [isTtsInitialized, setIsTtsInitialized] = useState(false);
+  const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
 
   useEffect(() => {
     loadFlags();
     initializeTTS();
+    loadVoiceCommandsSetting();
   }, []);
 
   const loadFlags = async () => {
@@ -137,6 +140,26 @@ export default function SettingsScreen({ navigation }: Props) {
     } catch (error) {
       console.error('🔊 Failed to test voice:', error);
       Alert.alert('Error', 'No se pudo probar la voz');
+    }
+  };
+
+  const loadVoiceCommandsSetting = async () => {
+    try {
+      const enabled = await AsyncStorage.getItem('voice_commands_enabled');
+      setVoiceCommandsEnabled(enabled !== 'false'); // Default to true
+    } catch (error) {
+      console.error('Failed to load voice commands setting:', error);
+    }
+  };
+
+  const handleVoiceCommandsToggle = async (enabled: boolean) => {
+    try {
+      await AsyncStorage.setItem('voice_commands_enabled', enabled.toString());
+      setVoiceCommandsEnabled(enabled);
+      await logEvent('voice_commands_toggled', { enabled });
+    } catch (error) {
+      console.error('Failed to save voice commands setting:', error);
+      Alert.alert('Error', 'No se pudo guardar la configuración');
     }
   };
 
@@ -299,6 +322,26 @@ export default function SettingsScreen({ navigation }: Props) {
               onValueChange={handleVoiceFeedbackToggle}
               trackColor={{ false: colors.surface, true: colors.primary }}
               thumbColor={ttsSettings.voiceFeedbackEnabled ? colors.text : colors.mutedText}
+            />
+          </View>
+
+          <View style={styles.flagRow}>
+            <View style={styles.flagLabelContainer}>
+              <Text style={[typography.body, styles.flagLabel]}>
+                {currentLanguage === 'es' ? 'Comandos por voz' : 'Voice Commands'}
+              </Text>
+              <Text style={[typography.body, { color: colors.mutedText, fontSize: 12 }]}>
+                {currentLanguage === 'es' 
+                  ? 'Usa comandos de voz para navegar la aplicación' 
+                  : 'Use voice commands to navigate the app'
+                }
+              </Text>
+            </View>
+            <Switch
+              value={voiceCommandsEnabled}
+              onValueChange={handleVoiceCommandsToggle}
+              trackColor={{ false: colors.surface, true: colors.primary }}
+              thumbColor={voiceCommandsEnabled ? colors.text : colors.mutedText}
             />
           </View>
         </View>

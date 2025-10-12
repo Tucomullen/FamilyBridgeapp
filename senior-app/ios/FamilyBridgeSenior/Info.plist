@@ -51,7 +51,9 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app needs access to location for emergency alerts.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>Allow $(PRODUCT_NAME) to access your microphone for voice commands</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to use speech recognition for voice commands</string>
     <key>NSUserNotificationsUsageDescription</key>
     <string>This app needs to send emergency notifications to alert family members.</string>
     <key>UILaunchStoryboardName</key>

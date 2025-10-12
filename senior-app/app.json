@@ -5,7 +5,11 @@
     "version": "0.1.0",
     "platforms": ["ios", "android"],
     "ios": {
-      "bundleIdentifier": "com.familybridge.senior"
+      "bundleIdentifier": "com.familybridge.senior",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to understand voice commands for easier navigation.",
+        "NSMicrophoneUsageDescription": "This app needs access to your microphone to listen to voice commands."
+      }
     },
     "android": {
       "package": "com.familybridge.senior"

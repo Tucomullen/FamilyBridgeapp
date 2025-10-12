@@ -45,14 +45,23 @@ class CameraManager {
       if (!Camera) {
         console.log('📷 Camera not available in Expo Go');
         this.isInitialized = true;
+        this.hasPermission = false;
         return;
       }
 
-      // Check if camera is available on device
-      const isAvailable = await Camera.isAvailableAsync();
-      if (!isAvailable) {
-        console.log('📷 Camera not available on this device');
+      // Check if camera is available on device by requesting permissions
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          console.log('📷 Camera not available on this device');
+          this.isInitialized = true;
+          this.hasPermission = false;
+          return;
+        }
+      } catch (cameraError) {
+        console.log('📷 Camera permission methods not available:', cameraError);
         this.isInitialized = true;
+        this.hasPermission = false;
         return;
       }
 
@@ -65,6 +74,7 @@ class CameraManager {
     } catch (error) {
       console.error('📷 Failed to initialize CameraManager:', error);
       this.isInitialized = true;
+      this.hasPermission = false;
     }
   }
 
@@ -180,7 +190,13 @@ class CameraManager {
   async isCameraAvailable(): Promise<boolean> {
     try {
       if (!Camera) return false;
-      return await Camera.isAvailableAsync();
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        return status === 'granted';
+      } catch (cameraError) {
+        console.log('📷 Camera permission methods not available:', cameraError);
+        return false;
+      }
     } catch (error) {
       console.error('📷 Failed to check camera availability:', error);
       return false;
@@ -194,10 +210,14 @@ class CameraManager {
       
       const types: CameraType[] = ['back'];
       
-      // Check if front camera is available
-      const hasFrontCamera = await Camera.isAvailableAsync();
-      if (hasFrontCamera) {
-        types.push('front');
+      // Check if front camera is available by checking permissions
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        if (status === 'granted') {
+          types.push('front');
+        }
+      } catch (permissionError) {
+        console.log('📷 Camera permission methods not available:', permissionError);
       }
       
       return types;

@@ -10,6 +10,47 @@ npm run start
 # press i / a to run on iOS/Android, or use Expo Go
 ```
 
+## Voice Commands (Task 2.6)
+
+The app includes voice command functionality for easier navigation by seniors. This feature uses push-to-talk interaction with Spanish and English support.
+
+### Features
+- **Push-to-Talk**: Large, accessible button for voice input
+- **Bilingual Support**: Spanish (es-ES) and English (en-US) recognition
+- **Simple Commands**: Call contacts, view photos, emergency, navigation
+- **TTS Feedback**: Audio confirmations and error messages
+- **Settings Toggle**: Enable/disable voice commands in Settings
+
+### Supported Commands
+
+#### Spanish
+- `llamar {nombre}` - Call a contact
+- `ver fotos` - Open photos
+- `siguiente` / `anterior` - Navigate photos
+- `emergencia` / `ayuda` / `sos` - Emergency
+- `volver` / `atrás` - Go back
+- `inicio` / `casa` - Go home
+- `leer pantalla` - Read current screen
+
+#### English
+- `call {name}` - Call a contact
+- `show photos` - Open photos
+- `next` / `previous` - Navigate photos
+- `emergency` / `help` / `sos` - Emergency
+- `go back` / `back` - Go back
+- `home` / `main` - Go home
+- `read screen` - Read current screen
+
+### Setup
+1. **Enable in Settings**: Go to Settings → Accessibility → Voice Commands
+2. **Grant Permissions**: Allow microphone access when prompted
+3. **Access Voice Screen**: Tap the 🎤 button on the home screen
+
+### Privacy Notes
+- Voice recognition is processed on-device
+- No voice data is stored or transmitted
+- Commands are processed locally with simple pattern matching
+
 ## Real WebRTC Calls (iOS-first)
 
 ### Prerequisites
