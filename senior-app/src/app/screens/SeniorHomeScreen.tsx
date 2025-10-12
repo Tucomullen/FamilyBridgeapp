@@ -6,12 +6,14 @@ import { t } from '../i18n';
 import { ttsService } from '../services/tts';
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
+import { useUIScale } from '../hooks/useUIScale';
 
 type Props = {
   navigation: any;
 };
 
 export default function SeniorHomeScreen({ navigation }: Props) {
+  const { theme, isHighContrast } = useUIScale();
   const [flags, setFlags] = useState<Record<FeatureFlag, boolean>>({
     CALL_ENABLED: true,
     SOS_ENABLED: true,
@@ -111,31 +113,161 @@ export default function SeniorHomeScreen({ navigation }: Props) {
   };
 
 
+  // Create dynamic styles based on current theme
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isHighContrast ? theme.colors.high.background : theme.colors.normal.background,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.xl,
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.md,
+    },
+    titleContainer: {
+      marginBottom: theme.spacing.lg,
+    },
+    title: {
+      color: isHighContrast ? theme.colors.high.text : theme.colors.normal.text,
+      textAlign: 'center',
+      fontSize: theme.fontSize.xxlarge,
+      fontWeight: 'bold',
+      letterSpacing: 1,
+    },
+    headerButtons: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+      alignItems: 'center',
+    },
+    headerButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: isHighContrast ? theme.colors.high.surface : theme.colors.normal.surface,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: isHighContrast ? theme.colors.high.border : theme.colors.normal.border,
+      minHeight: theme.touchTarget.recommended,
+    },
+    voiceButton: {
+      backgroundColor: isHighContrast ? theme.colors.high.primary : theme.colors.normal.primary,
+    },
+    headerButtonText: {
+      color: isHighContrast ? theme.colors.high.text : theme.colors.normal.text,
+      fontSize: theme.fontSize.medium,
+      fontWeight: '500',
+    },
+    grid: {
+      flex: 1,
+      justifyContent: 'space-evenly',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.lg,
+      maxWidth: 400,
+      alignSelf: 'center',
+      width: '100%',
+    },
+    actionTile: {
+      width: '100%',
+      maxWidth: 280,
+      height: theme.button.height.large * 2,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.md,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    callTile: {
+      backgroundColor: isHighContrast ? theme.colors.high.primary : theme.colors.normal.primary,
+    },
+    sosTile: {
+      backgroundColor: isHighContrast ? theme.colors.high.error : theme.colors.normal.error,
+    },
+    photosTile: {
+      backgroundColor: isHighContrast ? theme.colors.high.success : theme.colors.normal.success,
+    },
+    tileIcon: {
+      fontSize: 40,
+      marginBottom: theme.spacing.sm,
+    },
+    tileLabel: {
+      color: isHighContrast ? theme.colors.high.text : theme.colors.normal.text,
+      textAlign: 'center',
+      fontWeight: '700',
+      fontSize: theme.fontSize.large,
+      letterSpacing: 0.5,
+    },
+    hintContainer: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.xl,
+      alignItems: 'center',
+    },
+    hint: {
+      color: isHighContrast ? theme.colors.high.textSecondary : theme.colors.normal.textSecondary,
+      textAlign: 'center',
+      fontSize: theme.fontSize.medium,
+      lineHeight: theme.lineHeight.medium,
+      maxWidth: 320,
+    },
+    noFeaturesContainer: {
+      alignItems: 'center',
+      padding: theme.spacing.xl,
+      backgroundColor: isHighContrast ? theme.colors.high.surface : theme.colors.normal.surface,
+      borderRadius: 20,
+      width: '100%',
+      maxWidth: 300,
+    },
+    noFeaturesIcon: {
+      fontSize: 48,
+      marginBottom: theme.spacing.md,
+    },
+    noFeaturesText: {
+      color: isHighContrast ? theme.colors.high.text : theme.colors.normal.text,
+      textAlign: 'center',
+      marginBottom: theme.spacing.sm,
+      fontSize: theme.fontSize.large,
+      fontWeight: '600',
+    },
+    noFeaturesHint: {
+      color: isHighContrast ? theme.colors.high.textSecondary : theme.colors.normal.textSecondary,
+      textAlign: 'center',
+      fontSize: theme.fontSize.small,
+    },
+  });
+
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       {/* Header with TTS and Voice Commands */}
-      <View style={styles.header}>
+      <View style={dynamicStyles.header}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={title}
           onPress={handleTitlePress}
-          style={styles.titleContainer}
+          style={dynamicStyles.titleContainer}
         >
           <Text 
             accessibilityRole="header" 
-            style={styles.title}
+            style={dynamicStyles.title}
           >
             {title || 'FamilyBridge'}
           </Text>
         </Pressable>
-        <View style={styles.headerButtons}>
+        <View style={dynamicStyles.headerButtons}>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('home.tts.readTitle')}
             onPress={readTitle}
-            style={styles.headerButton}
+            style={dynamicStyles.headerButton}
           >
-            <Text style={styles.headerButtonText}>
+            <Text style={dynamicStyles.headerButtonText}>
               {t('home.tts.readTitle') || 'Read Title'}
             </Text>
           </Pressable>
@@ -144,26 +276,26 @@ export default function SeniorHomeScreen({ navigation }: Props) {
               accessibilityRole="button"
               accessibilityLabel={t('home.voiceCommands') || 'Voice Commands'}
               onPress={handleVoiceCommands}
-              style={[styles.headerButton, styles.voiceButton]}
+              style={[dynamicStyles.headerButton, dynamicStyles.voiceButton]}
             >
-              <Text style={styles.headerButtonText}>🎤</Text>
+              <Text style={dynamicStyles.headerButtonText}>🎤</Text>
             </Pressable>
           )}
         </View>
       </View>
 
       {/* Main Action Grid */}
-      <View style={styles.grid}>
+      <View style={dynamicStyles.grid}>
         {/* Call Button - Only show if enabled */}
         {flags.CALL_ENABLED && (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('home.call')}
             onPress={handleCall}
-            style={[styles.actionTile, styles.callTile]}
+            style={[dynamicStyles.actionTile, dynamicStyles.callTile]}
           >
-            <Text style={styles.tileIcon}>📞</Text>
-            <Text style={styles.tileLabel}>
+            <Text style={dynamicStyles.tileIcon}>📞</Text>
+            <Text style={dynamicStyles.tileLabel}>
               {t('home.call')}
             </Text>
           </Pressable>
@@ -175,10 +307,10 @@ export default function SeniorHomeScreen({ navigation }: Props) {
             accessibilityRole="button"
             accessibilityLabel={t('home.sos')}
             onPress={handleSOS}
-            style={[styles.actionTile, styles.sosTile]}
+            style={[dynamicStyles.actionTile, dynamicStyles.sosTile]}
           >
-            <Text style={styles.tileIcon}>🚨</Text>
-            <Text style={styles.tileLabel}>
+            <Text style={dynamicStyles.tileIcon}>🚨</Text>
+            <Text style={dynamicStyles.tileLabel}>
               {t('home.sos')}
             </Text>
           </Pressable>
@@ -190,10 +322,10 @@ export default function SeniorHomeScreen({ navigation }: Props) {
             accessibilityRole="button"
             accessibilityLabel={t('home.photos')}
             onPress={handlePhotos}
-            style={[styles.actionTile, styles.photosTile]}
+            style={[dynamicStyles.actionTile, dynamicStyles.photosTile]}
           >
-            <Text style={styles.tileIcon}>📷</Text>
-            <Text style={styles.tileLabel}>
+            <Text style={dynamicStyles.tileIcon}>📷</Text>
+            <Text style={dynamicStyles.tileLabel}>
               {t('home.photos')}
             </Text>
           </Pressable>
@@ -201,12 +333,12 @@ export default function SeniorHomeScreen({ navigation }: Props) {
 
         {/* Show message if all features are disabled */}
         {!flags.CALL_ENABLED && !flags.SOS_ENABLED && !flags.PHOTOS_ENABLED && (
-          <View style={styles.noFeaturesContainer}>
-            <Text style={styles.noFeaturesIcon}>⚙️</Text>
-            <Text style={styles.noFeaturesText}>
+          <View style={dynamicStyles.noFeaturesContainer}>
+            <Text style={dynamicStyles.noFeaturesIcon}>⚙️</Text>
+            <Text style={dynamicStyles.noFeaturesText}>
               {t('home.noFeatures')}
             </Text>
-            <Text style={styles.noFeaturesHint}>
+            <Text style={dynamicStyles.noFeaturesHint}>
               {t('home.noFeaturesHint')}
             </Text>
           </View>
@@ -214,8 +346,8 @@ export default function SeniorHomeScreen({ navigation }: Props) {
       </View>
 
       {/* Hint Text */}
-      <View style={styles.hintContainer}>
-        <Text style={styles.hint}>
+      <View style={dynamicStyles.hintContainer}>
+        <Text style={dynamicStyles.hint}>
           {t('home.hint')}
         </Text>
       </View>
@@ -223,130 +355,3 @@ export default function SeniorHomeScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.highContrastBg,
-    paddingHorizontal: spacing.l,
-    paddingTop: spacing.xl,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-    paddingHorizontal: spacing.m,
-  },
-  titleContainer: {
-    marginBottom: spacing.l,
-  },
-  title: {
-    color: colors.text,
-    textAlign: 'center',
-    fontSize: 36,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-  },
-  headerButtons: {
-    flexDirection: 'row',
-    gap: spacing.m,
-    alignItems: 'center',
-  },
-  headerButton: {
-    paddingVertical: spacing.s,
-    paddingHorizontal: spacing.m,
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  voiceButton: {
-    backgroundColor: colors.primary,
-  },
-  headerButtonText: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  grid: {
-    flex: 1,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    paddingVertical: spacing.l,
-    maxWidth: 400,
-    alignSelf: 'center',
-    width: '100%',
-  },
-  actionTile: {
-    width: '100%',
-    maxWidth: 280,
-    height: 120,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.l,
-    paddingHorizontal: spacing.m,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  callTile: {
-    backgroundColor: colors.primary,
-  },
-  sosTile: {
-    backgroundColor: colors.danger,
-  },
-  photosTile: {
-    backgroundColor: colors.success,
-  },
-  tileIcon: {
-    fontSize: 40,
-    marginBottom: spacing.s,
-  },
-  tileLabel: {
-    color: colors.text,
-    textAlign: 'center',
-    fontWeight: '700',
-    fontSize: 20,
-    letterSpacing: 0.5,
-  },
-  hintContainer: {
-    paddingHorizontal: spacing.l,
-    paddingBottom: spacing.xl,
-    alignItems: 'center',
-  },
-  hint: {
-    color: colors.mutedText,
-    textAlign: 'center',
-    fontSize: 16,
-    lineHeight: 22,
-    maxWidth: 320,
-  },
-  noFeaturesContainer: {
-    alignItems: 'center',
-    padding: spacing.xl,
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    width: '100%',
-    maxWidth: 300,
-  },
-  noFeaturesIcon: {
-    fontSize: 48,
-    marginBottom: spacing.m,
-  },
-  noFeaturesText: {
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: spacing.s,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  noFeaturesHint: {
-    color: colors.mutedText,
-    textAlign: 'center',
-    fontSize: 14,
-  },
-});

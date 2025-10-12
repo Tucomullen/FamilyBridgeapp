@@ -5,6 +5,7 @@ import { t, setLocale, getCurrentLocale, getDeviceLanguageCode, logLanguageInfo 
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
 import { ttsService, Voice, TTSSettings } from '../services/tts';
+import { useUIScale, UIScale } from '../hooks/useUIScale';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export default function SettingsScreen({ navigation }: Props) {
+  const { scale, contrast, setScale, toggleContrast, getScaleDisplayName, getContrastDisplayName } = useUIScale();
   const [flags, setFlags] = useState<Record<FeatureFlag, boolean>>({
     CALL_ENABLED: true,
     SOS_ENABLED: true,
@@ -163,6 +165,41 @@ export default function SettingsScreen({ navigation }: Props) {
     }
   };
 
+  const handleScaleChange = async (newScale: UIScale) => {
+    try {
+      await setScale(newScale);
+      const scaleName = getScaleDisplayName(newScale);
+      const message = currentLanguage === 'es' 
+        ? `Tamaño ${scaleName.toLowerCase()} activado`
+        : `${scaleName} size activated`;
+      
+      if (ttsSettings.voiceFeedbackEnabled) {
+        await ttsService.speak(message);
+      }
+      
+      await logEvent('ui_scale_changed', { scale: newScale });
+    } catch (error) {
+      console.error('Failed to change UI scale:', error);
+      Alert.alert('Error', 'No se pudo cambiar el tamaño');
+    }
+  };
+
+  const handleContrastToggle = async () => {
+    try {
+      await toggleContrast();
+      const contrastName = getContrastDisplayName();
+      
+      if (ttsSettings.voiceFeedbackEnabled) {
+        await ttsService.speak(contrastName);
+      }
+      
+      await logEvent('ui_contrast_toggled', { contrast });
+    } catch (error) {
+      console.error('Failed to toggle contrast:', error);
+      Alert.alert('Error', 'No se pudo cambiar el contraste');
+    }
+  };
+
   const getCurrentVoiceName = (): string => {
     const currentVoice = ttsService.getCurrentVoice();
     return currentVoice ? currentVoice.name : t('settings.voice.defaultVoice');
@@ -216,6 +253,104 @@ export default function SettingsScreen({ navigation }: Props) {
               English
             </Text>
           </Pressable>
+        </View>
+      </View>
+
+      {/* UI Scaling Settings */}
+      <View style={styles.section}>
+        <Text style={[typography.h2, styles.sectionTitle]}>
+          {currentLanguage === 'es' ? 'Tamaño de Texto y Botones' : 'Text & Button Size'}
+        </Text>
+        
+        <View style={styles.scaleButtonsContainer}>
+          <Pressable
+            style={[
+              styles.scaleButton,
+              scale === 'small' && styles.scaleButtonActive
+            ]}
+            onPress={() => handleScaleChange('small')}
+            accessibilityRole="button"
+            accessibilityLabel={currentLanguage === 'es' ? 'Seleccionar tamaño pequeño' : 'Select small size'}
+          >
+            <Text style={[
+              styles.scaleButtonText,
+              scale === 'small' && styles.scaleButtonTextActive
+            ]}>
+              {currentLanguage === 'es' ? '🅐 Pequeño' : '🅐 Small'}
+            </Text>
+            <Text style={[
+              styles.scaleButtonPreview,
+              scale === 'small' && styles.scaleButtonPreviewActive
+            ]}>
+              Aa
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.scaleButton,
+              scale === 'medium' && styles.scaleButtonActive
+            ]}
+            onPress={() => handleScaleChange('medium')}
+            accessibilityRole="button"
+            accessibilityLabel={currentLanguage === 'es' ? 'Seleccionar tamaño medio' : 'Select medium size'}
+          >
+            <Text style={[
+              styles.scaleButtonText,
+              scale === 'medium' && styles.scaleButtonTextActive
+            ]}>
+              {currentLanguage === 'es' ? '🅑 Medio' : '🅑 Medium'}
+            </Text>
+            <Text style={[
+              styles.scaleButtonPreview,
+              scale === 'medium' && styles.scaleButtonPreviewActive
+            ]}>
+              Aa
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.scaleButton,
+              scale === 'large' && styles.scaleButtonActive
+            ]}
+            onPress={() => handleScaleChange('large')}
+            accessibilityRole="button"
+            accessibilityLabel={currentLanguage === 'es' ? 'Seleccionar tamaño grande' : 'Select large size'}
+          >
+            <Text style={[
+              styles.scaleButtonText,
+              scale === 'large' && styles.scaleButtonTextActive
+            ]}>
+              {currentLanguage === 'es' ? '🅒 Grande' : '🅒 Large'}
+            </Text>
+            <Text style={[
+              styles.scaleButtonPreview,
+              scale === 'large' && styles.scaleButtonPreviewActive
+            ]}>
+              Aa
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.flagRow}>
+          <View style={styles.flagLabelContainer}>
+            <Text style={[typography.body, styles.flagLabel]}>
+              {currentLanguage === 'es' ? 'Alto Contraste' : 'High Contrast'}
+            </Text>
+            <Text style={[typography.body, { color: colors.mutedText, fontSize: 12 }]}>
+              {currentLanguage === 'es' 
+                ? 'Mejora el contraste para mejor visibilidad' 
+                : 'Enhance contrast for better visibility'
+              }
+            </Text>
+          </View>
+          <Switch
+            value={contrast === 'high'}
+            onValueChange={handleContrastToggle}
+            trackColor={{ false: colors.surface, true: colors.primary }}
+            thumbColor={contrast === 'high' ? colors.text : colors.mutedText}
+          />
         </View>
       </View>
 
@@ -569,5 +704,43 @@ const styles = {
   },
   buttonText: {
     color: colors.text,
+  },
+  scaleButtonsContainer: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-around' as const,
+    marginBottom: spacing.l,
+    gap: spacing.s,
+  },
+  scaleButton: {
+    flex: 1,
+    padding: spacing.m,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    alignItems: 'center' as const,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    minHeight: 80,
+    justifyContent: 'center' as const,
+  },
+  scaleButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.text,
+  },
+  scaleButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600' as const,
+    marginBottom: spacing.s,
+  },
+  scaleButtonTextActive: {
+    color: colors.highContrastBg,
+  },
+  scaleButtonPreview: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '400' as const,
+  },
+  scaleButtonPreviewActive: {
+    color: colors.highContrastBg,
   },
 };
