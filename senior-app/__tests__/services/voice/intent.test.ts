@@ -1,4 +1,4 @@
-import { parseVoiceIntent, getExamplePhrases, VoiceIntent } from '../../src/app/services/voice/intent';
+import { parseVoiceIntent, getExamplePhrases, VoiceIntent } from '../../../src/app/services/voice/intent';
 
 describe('Voice Intent Parser', () => {
   describe('Spanish Intent Parsing', () => {

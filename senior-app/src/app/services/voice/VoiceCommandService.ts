@@ -7,7 +7,7 @@ let isExpoGo = false;
 try {
   // Check if we're running in Expo Go
   isExpoGo = typeof __DEV__ !== 'undefined' && 
-    (global as any).expo !== undefined;
+    (globalThis as any).expo !== undefined;
   
   if (!isExpoGo) {
     Voice = require('@react-native-voice/voice').default;

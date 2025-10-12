@@ -1,4 +1,4 @@
-import { voiceCommandService } from '../../src/app/services/voice/VoiceCommandService';
+import { voiceCommandService } from '../../../src/app/services/voice/VoiceCommandService';
 
 // Mock @react-native-voice/voice
 jest.mock('@react-native-voice/voice', () => ({
@@ -12,7 +12,7 @@ jest.mock('@react-native-voice/voice', () => ({
 }));
 
 // Mock i18n
-jest.mock('../../src/app/i18n', () => ({
+jest.mock('../../../src/app/i18n', () => ({
   getCurrentLocale: jest.fn(() => 'en'),
 }));
 
@@ -83,7 +83,7 @@ describe('VoiceCommandService', () => {
       Voice.isAvailable.mockResolvedValue(true);
       Voice.start.mockResolvedValue(undefined);
 
-      const timeoutSpy = jest.spyOn(global, 'setTimeout');
+      const timeoutSpy = jest.spyOn(globalThis, 'setTimeout');
       
       await voiceCommandService.startListening({ timeout: 5000 });
       
@@ -98,7 +98,7 @@ describe('VoiceCommandService', () => {
       Voice.start.mockResolvedValue(undefined);
       Voice.stop.mockResolvedValue(undefined);
 
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = jest.spyOn(globalThis, 'clearTimeout');
       
       await voiceCommandService.startListening();
       await voiceCommandService.stopListening();
@@ -122,7 +122,7 @@ describe('VoiceCommandService', () => {
 
     test('should use device language as default', async () => {
       const { Voice } = require('@react-native-voice/voice');
-      const { getCurrentLocale } = require('../../src/app/i18n');
+      const { getCurrentLocale } = require('../../../src/app/i18n');
       
       getCurrentLocale.mockReturnValue('es');
       Voice.isAvailable.mockResolvedValue(true);

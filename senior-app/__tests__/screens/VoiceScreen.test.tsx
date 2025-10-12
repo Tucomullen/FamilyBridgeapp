@@ -29,8 +29,8 @@ jest.mock('../../src/app/services/tts', () => ({
 
 // Mock i18n
 jest.mock('../../src/app/i18n', () => ({
-  t: jest.fn((key) => {
-    const translations = {
+  t: jest.fn((key: string) => {
+    const translations: Record<string, string> = {
       'common.locale': 'en',
       'home.voiceCommands': 'Voice Commands',
     };
