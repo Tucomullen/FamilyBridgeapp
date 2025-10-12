@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Customizable UI Scaling (Task 2.7)**
+  - Three size presets: Small (80%), Medium (100%), Large (120%)
+  - High contrast mode for enhanced visibility and accessibility
+  - Instant UI updates without app restart
+  - TTS feedback for all scaling changes
+  - WCAG 2.2 AA compliant contrast ratios
+  - Persistent settings across app sessions
+  - Large, accessible controls in Settings screen
+  - Global theme integration with React Context
+  - Comprehensive unit tests for scaling functionality
+
 - **Voice Commands (Task 2.6)**
   - Push-to-talk voice command system for senior-friendly navigation
   - Bilingual support for Spanish (es-ES) and English (en-US) recognition

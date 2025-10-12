@@ -33,6 +33,8 @@ export type TelemetryEvent =
   | 'voice_commands_toggled'
   | 'voice_command_recognized'
   | 'voice_command_executed'
+  | 'ui_scale_changed'
+  | 'ui_contrast_toggled'
   | 'flag_toggle';
 
 export interface TelemetryPayload {

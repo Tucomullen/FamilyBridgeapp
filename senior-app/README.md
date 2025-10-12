@@ -51,6 +51,47 @@ The app includes voice command functionality for easier navigation by seniors. T
 - No voice data is stored or transmitted
 - Commands are processed locally with simple pattern matching
 
+## Customizable UI Scaling (Task 2.7)
+
+The app includes customizable UI scaling to improve visibility and comfort for seniors. This feature allows users to adjust text and button sizes with simple, large controls.
+
+### Features
+- **Three Size Presets**: Small, Medium (default), and Large
+- **High Contrast Mode**: Enhanced contrast for better visibility
+- **Instant Updates**: Changes apply immediately without restart
+- **TTS Feedback**: Audio confirmations for all changes
+- **Accessibility Compliant**: WCAG 2.2 AA contrast ratios
+- **Persistent Settings**: Preferences saved across app sessions
+
+### Size Options
+- **🅐 Small**: 80% of default size (14pt font, 48px buttons)
+- **🅑 Medium**: Default size (18pt font, 56px buttons)
+- **🅒 Large**: 120% of default size (22pt font, 64px buttons)
+
+### High Contrast Mode
+- **Enhanced Colors**: Higher contrast ratios for better visibility
+- **WCAG Compliant**: Meets accessibility standards (≥4.5:1 ratio)
+- **Global Application**: Affects all text and button colors
+
+### Setup
+1. **Access Settings**: Go to Settings → Text & Button Size
+2. **Select Size**: Tap one of the three size buttons (🅐🅑🅒)
+3. **Toggle Contrast**: Use the High Contrast switch if needed
+4. **Hear Confirmation**: TTS will confirm your selection
+
+### Accessibility Benefits
+- **Large Touch Targets**: Minimum 48px touch targets maintained
+- **Scalable Text**: All text scales proportionally
+- **High Contrast**: Better visibility for users with vision impairments
+- **Voice Feedback**: Audio confirmations for all changes
+- **Simple Controls**: Large, clear buttons for easy selection
+
+### Technical Details
+- **Global Scaling**: Applied to all screens and components
+- **Theme Integration**: Uses React Context for real-time updates
+- **Persistent Storage**: Settings saved in AsyncStorage
+- **Performance Optimized**: Efficient re-rendering with dynamic styles
+
 ## Real WebRTC Calls (iOS-first)
 
 ### Prerequisites
