@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
 import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
 import { speak } from '../lib/accessibility/tts';
@@ -23,13 +22,18 @@ export default function FamilyLinkScreen({ navigation }: any) {
         <Text style={[typography.body, { color: colors.text }]}>{t('onb.tts.play')}</Text>
       </Pressable>
 
-      <View accessibilityLabel="QR Code" accessible style={{ backgroundColor: '#fff', padding: spacing.m, borderRadius: 12, marginBottom: spacing.l }}>
-        <QRCode value={qrValue} size={220} />
+      {/* Simple text-based pairing code display instead of QR code */}
+      <View accessibilityLabel="Pairing Information" accessible style={{ backgroundColor: colors.surface, padding: spacing.l, borderRadius: 12, marginBottom: spacing.l, alignItems: 'center' }}>
+        <Text style={[typography.h3, { color: colors.text, marginBottom: spacing.m, textAlign: 'center' }]}>
+          {t('onb.link.codeLabel')}
+        </Text>
+        <Text style={[typography.h1, { color: colors.primary, fontFamily: 'monospace', letterSpacing: 2, textAlign: 'center' }]}>
+          {payload.code}
+        </Text>
+        <Text style={[typography.body, { color: colors.mutedText, marginTop: spacing.s, textAlign: 'center', fontSize: 12 }]}>
+          Share this code with your family
+        </Text>
       </View>
-
-      <Text accessibilityLabel={`${t('onb.link.codeLabel')}: ${payload.code}`} style={[typography.h2, { color: colors.text, marginBottom: spacing.xl }]}>
-        {t('onb.link.codeLabel')}: {payload.code}
-      </Text>
 
       <Pressable accessibilityRole="button" accessibilityLabel="Continue" onPress={() => navigation.navigate('Confirmation')} style={{ minWidth: 220, alignItems: 'center', paddingVertical: spacing.l, backgroundColor: colors.primary, borderRadius: 12 }}>
         <Text style={[typography.button, { color: colors.text }]}>Continue</Text>

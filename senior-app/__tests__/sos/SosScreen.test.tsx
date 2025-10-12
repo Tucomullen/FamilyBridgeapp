@@ -2,6 +2,9 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import SosScreen from '../../src/app/screens/SosScreen';
 
+// Declare global for tests
+declare const global: any;
+
 // Mock the telemetry module
 jest.mock('../../src/app/telemetry/logEvent', () => ({
   logEvent: jest.fn(),
@@ -59,8 +62,8 @@ describe('SosScreen', () => {
 
   it('handles send failure and shows retry', async () => {
     // Temporarily override __DEV__ to false to test failure path
-    const originalDev = global.__DEV__;
-    global.__DEV__ = false;
+    const originalDev = (global as any).__DEV__;
+    (global as any).__DEV__ = false;
     
     // Mock Math.random to return failure value
     const originalRandom = Math.random;
@@ -87,14 +90,14 @@ describe('SosScreen', () => {
     });
 
     // Restore original values
-    global.__DEV__ = originalDev;
+    (global as any).__DEV__ = originalDev;
     Math.random = originalRandom;
   });
 
   it('retries after failure', async () => {
     // Temporarily override __DEV__ to false to test failure path
-    const originalDev = global.__DEV__;
-    global.__DEV__ = false;
+    const originalDev = (global as any).__DEV__;
+    (global as any).__DEV__ = false;
     
     // Mock Math.random to return failure value
     const originalRandom = Math.random;
@@ -129,7 +132,7 @@ describe('SosScreen', () => {
     expect(getByText(/Enviando alerta|Sending/i)).toBeTruthy();
 
     // Restore original values
-    global.__DEV__ = originalDev;
+    (global as any).__DEV__ = originalDev;
     Math.random = originalRandom;
   });
 
@@ -155,8 +158,8 @@ describe('SosScreen', () => {
 
   it('resets alert state', async () => {
     // Ensure we're in dev mode for success path
-    const originalDev = global.__DEV__;
-    global.__DEV__ = true;
+    const originalDev = (global as any).__DEV__;
+    (global as any).__DEV__ = true;
 
     const { getByText, getByRole } = render(
       <SosScreen navigation={mockNavigation} />
@@ -185,7 +188,7 @@ describe('SosScreen', () => {
     expect(getByText(/Funcionalidad de emergencia próximamente|Emergency functionality coming soon/i)).toBeTruthy();
 
     // Restore original value
-    global.__DEV__ = originalDev;
+    (global as any).__DEV__ = originalDev;
   });
 
   it('navigates back', () => {

@@ -1,50 +1,134 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Pressable, Modal, Alert, Vibration } from 'react-native';
 import { colors, spacing, typography } from '../theme/colors';
 import { t } from '../i18n';
 import { logEvent } from '../telemetry/logEvent';
+import { notificationService, NotificationPayload } from '../services/notifications';
+import { locationService } from '../services/location';
+import { ttsService } from '../services/tts';
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   navigation: any;
 };
 
-type SosState = 'idle' | 'sending' | 'sent' | 'failed';
+type SosState = 'idle' | 'confirming' | 'sending' | 'sent' | 'failed';
 
 export default function SosScreen({ navigation }: Props) {
   const [sosState, setSosState] = useState<SosState>('idle');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deviceId] = useState(() => uuidv4());
+
+  useEffect(() => {
+    // Initialize services
+    const initServices = async () => {
+      try {
+        await notificationService.initialize();
+        await locationService.initialize();
+        await ttsService.initialize();
+        console.log('🚨 SOS Screen: Services initialized');
+      } catch (error) {
+        console.error('🚨 SOS Screen: Failed to initialize services:', error);
+      }
+    };
+
+    initServices();
+  }, []);
+
+  const handleSosPress = async () => {
+    setSosState('confirming');
+    setShowConfirmModal(true);
+    await ttsService.speak('SOS activado');
+  };
 
   const sendAlert = async () => {
     setSosState('sending');
-    await logEvent('sos_send_attempt');
+    setShowConfirmModal(false);
     
-    // Simulate network delay
-    setTimeout(() => {
-      // Random 10-20% chance of failure (fixed in dev for testing)
-      const isSuccess = __DEV__ ? true : Math.random() > 0.15;
+    try {
+      await logEvent('sos_requested', { locationAttached: false });
       
-      if (isSuccess) {
+      // Get location (with timeout)
+      let location = null;
+      try {
+        location = await Promise.race([
+          locationService.getLastKnownLocation(),
+          new Promise<null>((_, reject) => 
+            setTimeout(() => reject(new Error('Location timeout')), 3000)
+          )
+        ]);
+      } catch (error) {
+        console.log('🚨 SOS: Location not available:', error);
+      }
+
+      // Prepare payload
+      const payload: NotificationPayload = {
+        deviceId,
+        pushToken: notificationService.getPushToken() || undefined,
+        location,
+        timestamp: Date.now()
+      };
+
+      console.log('🚨 SOS: Sending alert with payload:', {
+        deviceId: payload.deviceId,
+        hasToken: !!payload.pushToken,
+        hasLocation: !!payload.location,
+        timestamp: payload.timestamp
+      });
+
+      // Send notification
+      const success = await notificationService.sendDevNotification(payload);
+      
+      if (success) {
         setSosState('sent');
-        logEvent('sos_sent');
+        await logEvent('sos_sent', { 
+          locationAttached: !!location,
+          hasToken: !!payload.pushToken 
+        });
+        
+        // Haptic feedback
+        if (Vibration.vibrate) {
+          Vibration.vibrate([0, 500, 200, 500]); // Success pattern
+        }
+        
+        // Speak confirmation
+        await ttsService.speak('Alerta de emergencia enviada');
       } else {
         setSosState('failed');
-        logEvent('sos_retry');
+        await logEvent('sos_failed', { 
+          locationAttached: !!location,
+          hasToken: !!payload.pushToken 
+        });
+        
+        // Speak error
+        await ttsService.speak('Error al enviar alerta');
       }
-    }, 2000);
+    } catch (error) {
+      console.error('🚨 SOS: Failed to send alert:', error);
+      setSosState('failed');
+      await logEvent('sos_failed', { locationAttached: false });
+    }
   };
 
   const retryAlert = async () => {
     setSosState('idle');
-    await sendAlert();
+    handleSosPress();
   };
 
   const resetAlert = () => {
     setSosState('idle');
   };
 
+  const cancelAlert = () => {
+    setSosState('idle');
+    setShowConfirmModal(false);
+  };
+
   const getStatusText = () => {
     switch (sosState) {
       case 'idle': return t('sos.placeholder');
-      case 'sending': return 'Enviando alerta...';
+      case 'confirming': return 'Confirming...';
+      case 'sending': return t('sos.status.sending');
       case 'sent': return t('sos.status.sent');
       case 'failed': return t('sos.status.failed');
       default: return '';
@@ -89,7 +173,7 @@ export default function SosScreen({ navigation }: Props) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('sos.cta.send')}
-          onPress={sendAlert}
+          onPress={handleSosPress}
           style={{
             padding: spacing.xl,
             backgroundColor: colors.danger,
@@ -176,6 +260,101 @@ export default function SosScreen({ navigation }: Props) {
           {t('common.back')}
         </Text>
       </Pressable>
+
+      {/* Dev Notifications Link (only in dev) */}
+      {__DEV__ && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="View Dev Notifications"
+          onPress={() => navigation.navigate('DevNotifications')}
+          style={{
+            padding: spacing.m,
+            backgroundColor: colors.surface,
+            borderRadius: 8,
+            minWidth: 120,
+            alignItems: 'center',
+            marginTop: spacing.m,
+          }}
+        >
+          <Text style={[typography.body, { color: colors.mutedText, fontSize: 12 }]}>
+            Dev Notifications
+          </Text>
+        </Pressable>
+      )}
+
+      {/* Confirmation Modal */}
+      <Modal
+        visible={showConfirmModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={cancelAlert}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: spacing.l,
+        }}>
+          <View style={{
+            backgroundColor: colors.highContrastBg,
+            borderRadius: 16,
+            padding: spacing.xl,
+            width: '100%',
+            maxWidth: 400,
+            alignItems: 'center',
+          }}>
+            <Text 
+              accessibilityRole="header"
+              style={[typography.h2, { color: colors.text, textAlign: 'center', marginBottom: spacing.l }]}
+            >
+              {t('sos.confirm.title')}
+            </Text>
+            
+            <Text 
+              style={[typography.body, { color: colors.mutedText, textAlign: 'center', marginBottom: spacing.xl, lineHeight: 24 }]}
+            >
+              {t('sos.confirm.body')}
+            </Text>
+
+            <View style={{ flexDirection: 'row', width: '100%', gap: spacing.m }}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('sos.confirm.ctaCancel')}
+                onPress={cancelAlert}
+                style={{
+                  flex: 1,
+                  padding: spacing.l,
+                  backgroundColor: colors.surface,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={[typography.button, { color: colors.text }]}>
+                  {t('sos.confirm.ctaCancel')}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('sos.confirm.ctaSend')}
+                onPress={sendAlert}
+                style={{
+                  flex: 1,
+                  padding: spacing.l,
+                  backgroundColor: colors.danger,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={[typography.button, { color: colors.text }]}>
+                  {t('sos.confirm.ctaSend')}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
