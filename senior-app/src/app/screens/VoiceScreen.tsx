@@ -163,6 +163,18 @@ export default function VoiceScreen({ navigation }: Props) {
   };
 
   const handlePressToTalk = async () => {
+    // Check if voice recognition is available
+    if (!voiceCommandService.isAvailable()) {
+      Alert.alert(
+        currentLanguage === 'es-ES' ? 'No disponible' : 'Not Available',
+        currentLanguage === 'es-ES' 
+          ? 'El reconocimiento de voz no está disponible en este dispositivo.'
+          : 'Voice recognition is not available on this device.',
+        [{ text: currentLanguage === 'es-ES' ? 'OK' : 'OK' }]
+      );
+      return;
+    }
+
     if (voiceState === 'listening') {
       await voiceCommandService.stopListening();
       return;
@@ -183,6 +195,10 @@ export default function VoiceScreen({ navigation }: Props) {
   };
 
   const getButtonText = () => {
+    if (!voiceCommandService.isAvailable()) {
+      return currentLanguage === 'es-ES' ? '❌ No disponible' : '❌ Not Available';
+    }
+
     switch (voiceState) {
       case 'listening':
         return currentLanguage === 'es-ES' ? '🎤 Escuchando...' : '🎤 Listening...';
@@ -198,6 +214,10 @@ export default function VoiceScreen({ navigation }: Props) {
   };
 
   const getButtonColor = () => {
+    if (!voiceCommandService.isAvailable()) {
+      return colors.mutedText;
+    }
+
     switch (voiceState) {
       case 'listening':
         return colors.success;

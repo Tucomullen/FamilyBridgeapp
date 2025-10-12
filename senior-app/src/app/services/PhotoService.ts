@@ -85,20 +85,25 @@ class PhotoService {
         return 'unavailable';
       }
       
-      const { status: existingStatus } = await Camera.requestCameraPermissionsAsync();
-      console.log('📷 Current camera permission status:', existingStatus);
-      
-      let finalStatus = existingStatus;
+      try {
+        const { status: existingStatus } = await Camera.getCameraPermissionsAsync();
+        console.log('📷 Current camera permission status:', existingStatus);
+        
+        let finalStatus = existingStatus;
 
-      if (existingStatus !== 'granted') {
-        console.log('📷 Requesting camera permissions...');
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        finalStatus = status;
-        console.log('📷 Camera permission request result:', finalStatus);
+        if (existingStatus !== 'granted') {
+          console.log('📷 Requesting camera permissions...');
+          const { status } = await Camera.requestCameraPermissionsAsync();
+          finalStatus = status;
+          console.log('📷 Camera permission request result:', finalStatus);
+        }
+
+        console.log('📷 Final camera permission status:', finalStatus);
+        return finalStatus === 'granted' ? 'granted' : 'denied';
+      } catch (cameraError) {
+        console.log('📷 Camera permission methods not available:', cameraError);
+        return 'unavailable';
       }
-
-      console.log('📷 Final camera permission status:', finalStatus);
-      return finalStatus === 'granted' ? 'granted' : 'denied';
     } catch (error) {
       console.error('📷 Camera permission error:', error);
       return 'unavailable';
@@ -114,20 +119,25 @@ class PhotoService {
         return 'unavailable';
       }
       
-      const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
-      console.log('📷 Current media library permission status:', existingStatus);
-      
-      let finalStatus = existingStatus;
+      try {
+        const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
+        console.log('📷 Current media library permission status:', existingStatus);
+        
+        let finalStatus = existingStatus;
 
-      if (existingStatus !== 'granted') {
-        console.log('📷 Requesting media library permissions...');
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        finalStatus = status;
-        console.log('📷 Media library permission request result:', finalStatus);
+        if (existingStatus !== 'granted') {
+          console.log('📷 Requesting media library permissions...');
+          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          finalStatus = status;
+          console.log('📷 Media library permission request result:', finalStatus);
+        }
+
+        console.log('📷 Final media library permission status:', finalStatus);
+        return finalStatus === 'granted' ? 'granted' : 'denied';
+      } catch (imagePickerError) {
+        console.log('📷 ImagePicker permission methods not available:', imagePickerError);
+        return 'unavailable';
       }
-
-      console.log('📷 Final media library permission status:', finalStatus);
-      return finalStatus === 'granted' ? 'granted' : 'denied';
     } catch (error) {
       console.error('📷 Media library permission error:', error);
       return 'unavailable';

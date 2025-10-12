@@ -1,5 +1,20 @@
-import Voice, { SpeechResultsEvent, SpeechErrorEvent } from '@react-native-voice/voice';
 import { getCurrentLocale } from '../../i18n';
+
+// Try to import Voice, but handle cases where it's not available
+let Voice: any = null;
+let isExpoGo = false;
+
+try {
+  // Check if we're running in Expo Go
+  isExpoGo = typeof __DEV__ !== 'undefined' && 
+    (global as any).expo !== undefined;
+  
+  if (!isExpoGo) {
+    Voice = require('@react-native-voice/voice').default;
+  }
+} catch (error) {
+  console.warn('🎤 Voice module not available:', error);
+}
 
 export interface VoiceCommandEvent {
   type: 'listening' | 'result' | 'error' | 'timeout' | 'stopped';
@@ -26,9 +41,38 @@ class VoiceCommandService {
   private readonly defaultTimeout = 8000; // 8 seconds
   private currentLanguage: 'es-ES' | 'en-US' = 'en-US';
   private listeners: Map<string, ((event: VoiceCommandEvent) => void)[]> = new Map();
+  private isVoiceAvailable = false;
 
   constructor() {
-    this.setupVoiceListeners();
+    this.initializeVoice();
+  }
+
+  private async initializeVoice() {
+    if (isExpoGo) {
+      console.warn('🎤 Voice module not available in Expo Go - voice commands disabled');
+      this.isVoiceAvailable = false;
+      return;
+    }
+
+    if (!Voice) {
+      console.warn('🎤 Voice module not available - voice commands disabled');
+      this.isVoiceAvailable = false;
+      return;
+    }
+
+    try {
+      const isAvailable = await Voice.isAvailable();
+      this.isVoiceAvailable = isAvailable;
+      if (isAvailable) {
+        this.setupVoiceListeners();
+        console.log('🎤 Voice service initialized successfully');
+      } else {
+        console.warn('🎤 Voice recognition not available on this device');
+      }
+    } catch (error) {
+      console.error('🎤 Failed to initialize voice service:', error);
+      this.isVoiceAvailable = false;
+    }
   }
 
   on(event: string, listener: (event: VoiceCommandEvent) => void): void {
@@ -50,6 +94,8 @@ class VoiceCommandService {
   }
 
   private setupVoiceListeners(): void {
+    if (isExpoGo || !Voice || !this.isVoiceAvailable) return;
+
     Voice.onSpeechStart = () => {
       console.log('🎤 Voice recognition started');
       this.emit('listening');
@@ -60,7 +106,7 @@ class VoiceCommandService {
       this.stopListening();
     };
 
-    Voice.onSpeechResults = (e: SpeechResultsEvent) => {
+    Voice.onSpeechResults = (e: any) => {
       if (e.value && e.value.length > 0) {
         const transcript = e.value[0];
         const confidence = 0.8; // Default confidence since it's not available in the type
@@ -69,7 +115,7 @@ class VoiceCommandService {
       }
     };
 
-    Voice.onSpeechError = (e: SpeechErrorEvent) => {
+    Voice.onSpeechError = (e: any) => {
       console.error('🎤 Voice error:', e.error);
       this.emit('error', { error: e.error?.message || 'Unknown error' });
       this.stopListening();
@@ -77,9 +123,23 @@ class VoiceCommandService {
   }
 
   /**
+   * Check if voice recognition is available
+   */
+  isAvailable(): boolean {
+    return this.isVoiceAvailable;
+  }
+
+  /**
    * Start listening for voice commands
    */
   async startListening(options: VoiceCommandOptions = {}): Promise<void> {
+    if (!this.isVoiceAvailable) {
+      const error = 'Voice recognition not available on this device';
+      console.warn('🎤', error);
+      this.emit('error', { error });
+      throw new Error(error);
+    }
+
     if (this.isListening) {
       console.log('🎤 Already listening, stopping previous session');
       await this.stopListening();
@@ -123,7 +183,7 @@ class VoiceCommandService {
    * Stop listening for voice commands
    */
   async stopListening(): Promise<void> {
-    if (!this.isListening) {
+    if (!this.isListening || !this.isVoiceAvailable) {
       return;
     }
 
@@ -161,6 +221,10 @@ class VoiceCommandService {
    * Request microphone permissions
    */
   private async requestPermissions(): Promise<boolean> {
+    if (isExpoGo || !Voice || !this.isVoiceAvailable) {
+      return false;
+    }
+
     try {
       const hasPermission = await Voice.isAvailable();
       if (!hasPermission) {
