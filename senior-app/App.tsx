@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import RootNavigator from './src/app/navigation/RootNavigator';
 import { colors } from './src/app/theme/colors';
 import { StatusBar } from 'react-native';
 import { logLanguageInfo, testLanguageDetection } from './src/app/i18n';
+import { navigationService } from './src/app/services/navigation/NavigationService';
 
 const navTheme = {
   ...DefaultTheme,
@@ -16,6 +17,8 @@ const navTheme = {
 };
 
 export default function App() {
+  const navigationRef = useRef<any>(null);
+
   useEffect(() => {
     // Test language detection
     testLanguageDetection();
@@ -24,8 +27,15 @@ export default function App() {
     logLanguageInfo();
   }, []);
 
+  useEffect(() => {
+    if (navigationRef.current) {
+      navigationService.setNavigationRef(navigationRef.current);
+      navigationService.initialize();
+    }
+  }, []);
+
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer ref={navigationRef} theme={navTheme}>
       <StatusBar barStyle="light-content" />
       <RootNavigator />
     </NavigationContainer>

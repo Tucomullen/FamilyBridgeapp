@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
 import OnboardingNavigator from '../onboarding/OnboardingNavigator';
 import SeniorHomeScreen from '../screens/SeniorHomeScreen';
 import CallScreen from '../screens/CallScreen';
@@ -11,34 +10,24 @@ import VoiceScreen from '../screens/VoiceScreen';
 import DevApiScreen from '../screens/DevApiScreen';
 import DevNotificationsScreen from '../screens/DevNotificationsScreen';
 import { UIScaleProvider } from '../hooks/useUIScale';
-import { navigationService } from '../services/navigation/NavigationService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
   const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null);
-  const navigationRef = useRef<any>(null);
 
   useEffect(() => {
     AsyncStorage.getItem('hasOnboarded').then((v) => setHasOnboarded(v === 'true'));
-  }, []);
-
-  useEffect(() => {
-    if (navigationRef.current) {
-      navigationService.setNavigationRef(navigationRef.current);
-      navigationService.initialize();
-    }
   }, []);
 
   if (hasOnboarded === null) return null;
 
   return (
     <UIScaleProvider>
-      <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator 
-          screenOptions={{ headerShown: false }}
-        >
+      <Stack.Navigator 
+        screenOptions={{ headerShown: false }}
+      >
           {hasOnboarded ? (
             <>
               <Stack.Screen name="Home" component={SeniorHomeScreen} />
@@ -59,7 +48,6 @@ export default function RootNavigator() {
             </Stack.Screen>
           )}
         </Stack.Navigator>
-      </NavigationContainer>
     </UIScaleProvider>
   );
 }
