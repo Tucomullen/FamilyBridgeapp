@@ -45,6 +45,16 @@
   "common": {
     "back": "Back"
   },
+  "nav": {
+    "home": "Home",
+    "back": "Back",
+    "youAreHere": "You are on",
+    "goingBack": "Going back",
+    "goingHome": "Going to home",
+    "alreadyAtHome": "You are already at home",
+    "homeHint": "Tap to return to the main screen",
+    "backHint": "Tap to go back to the previous screen"
+  },
   "settings": {
     "title": "Settings",
     "language": {

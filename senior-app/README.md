@@ -92,6 +92,44 @@ The app includes customizable UI scaling to improve visibility and comfort for s
 - **Persistent Storage**: Settings saved in AsyncStorage
 - **Performance Optimized**: Efficient re-rendering with dynamic styles
 
+## Enhanced Navigation (Task 2.8)
+
+The app includes enhanced navigation features designed for simplicity and accessibility for seniors. This system provides clear breadcrumbs, consistent back navigation, and a quick return to home functionality.
+
+### Features
+- **Clear Breadcrumbs**: Maximum 2 levels (e.g., "Inicio › Fotos")
+- **Consistent Back Button**: Always in top-left with high contrast
+- **Quick Home Button**: Fixed "🏠 Inicio" button always visible (except on Home)
+- **Navigation History**: Reliable back navigation with fallback to Home
+- **TTS Feedback**: Voice confirmations for all navigation actions
+- **Accessibility Compliant**: Large touch targets and high contrast
+
+### Navigation Components
+- **Breadcrumbs**: Show current location with max 2 levels
+- **Back Button**: "↑ Volver" button for reliable back navigation
+- **Quick Home**: "🏠 Inicio" button for instant return to main screen
+- **Navigation History**: In-memory stack with max 10 entries
+
+### How It Works
+1. **Breadcrumbs**: Display current location (e.g., "Inicio › Fotos")
+2. **Back Navigation**: Tap "↑ Volver" to go back or return to Home
+3. **Quick Home**: Tap "🏠 Inicio" to instantly return to main screen
+4. **Voice Feedback**: Hear "Volviendo atrás" or "Volviendo a inicio"
+
+### Accessibility Benefits
+- **Large Touch Targets**: Minimum 48px for all navigation controls
+- **High Contrast**: Clear visibility with WCAG AA compliance
+- **Voice Feedback**: Audio confirmations for all navigation actions
+- **Simple Layout**: Clean, uncluttered navigation interface
+- **Predictable Behavior**: Consistent navigation patterns
+
+### Technical Details
+- **NavigationService**: Centralized navigation history management
+- **React Context**: Real-time UI updates for breadcrumbs
+- **Event System**: Observer pattern for navigation state changes
+- **Type Safety**: Full TypeScript support for screen names
+- **Error Handling**: Graceful fallbacks for navigation errors
+
 ## Real WebRTC Calls (iOS-first)
 
 ### Prerequisites

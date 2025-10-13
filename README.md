@@ -145,6 +145,43 @@ The FamilyBridge Senior App now includes comprehensive text-to-speech (TTS) capa
 - **English**: "Hello, I am your FamilyBridge assistant. How are you today?"
 - **Action Confirmations**: "Foto tomada", "SOS activado", "Llamada iniciada"
 
+## 🧭 Enhanced Navigation (Task 2.8)
+
+The app features enhanced navigation designed specifically for seniors, providing clear visual cues and predictable navigation patterns.
+
+### Features
+
+- **Clear Breadcrumbs**: Maximum 2 levels showing current location (e.g., "Inicio › Fotos")
+- **Consistent Back Button**: Always in top-left corner with high contrast (↑ Volver)
+- **Quick Home Button**: Fixed "🏠 Inicio" button always visible (except on Home screen)
+- **Navigation History**: Reliable back navigation with in-memory history stack
+- **TTS Feedback**: Audio confirmation for all navigation actions
+- **Accessibility**: Large touch targets (≥48px) and screen reader support
+
+### How It Works
+
+1. **Breadcrumbs**: Show current location with maximum 2 levels, first level clickable
+2. **Back Button**: Predictable back navigation - goes to previous screen or Home
+3. **Quick Home**: One-tap return to main screen from anywhere
+4. **Navigation History**: Maintains last 10 navigation entries for reliable back behavior
+5. **TTS Feedback**: Brief audio confirmation ("Volviendo atrás", "Volviendo a inicio")
+
+### Accessibility Benefits
+
+- **Large Touch Targets**: All navigation controls ≥48px for easy tapping
+- **High Contrast**: Clear visual distinction for navigation elements
+- **Screen Reader Support**: Proper accessibility labels and roles
+- **Predictable Behavior**: Consistent navigation patterns reduce confusion
+- **Voice Feedback**: Audio confirmation for all navigation actions
+
+### Technical Details
+
+- **NavigationService**: Centralized navigation management with history tracking
+- **Event System**: Custom event emitter for UI updates
+- **React Navigation Integration**: Seamless integration with existing navigation
+- **i18n Support**: Full Spanish and English localization
+- **Memory Management**: Limited history stack (max 10 entries) for performance
+
 ## 🛠️ Tech Stack
 
 - **Frontend (Senior)**: React Native + Expo

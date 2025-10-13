@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Enhanced Navigation (Task 2.8)**
+  - Clear breadcrumbs with maximum 2 levels (e.g., "Inicio › Fotos")
+  - Consistent back button (↑ Volver) in top-left with high contrast
+  - Fixed "🏠 Inicio" button always visible (except on Home screen)
+  - Navigation history management with reliable back navigation
+  - TTS feedback for all navigation actions ("Volviendo atrás", "Volviendo a inicio")
+  - Accessibility compliant with large touch targets (≥48px)
+  - NavigationService with in-memory history stack (max 10 entries)
+  - Breadcrumbs and QuickHomeButton components
+  - Comprehensive unit tests for navigation functionality
+
 - **Customizable UI Scaling (Task 2.7)**
   - Three size presets: Small (80%), Medium (100%), Large (120%)
   - High contrast mode for enhanced visibility and accessibility

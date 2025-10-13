@@ -45,6 +45,16 @@
   "common": {
     "back": "Atrás"
   },
+  "nav": {
+    "home": "Inicio",
+    "back": "Volver",
+    "youAreHere": "Estás en",
+    "goingBack": "Volviendo atrás",
+    "goingHome": "Volviendo a inicio",
+    "alreadyAtHome": "Ya estás en inicio",
+    "homeHint": "Toca para volver a la pantalla principal",
+    "backHint": "Toca para volver a la pantalla anterior"
+  },
   "settings": {
     "title": "Configuración",
     "language": {

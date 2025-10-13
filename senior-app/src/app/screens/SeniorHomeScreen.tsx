@@ -7,6 +7,8 @@ import { ttsService } from '../services/tts';
 import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
 import { useUIScale } from '../hooks/useUIScale';
+import { navigationService } from '../services/navigation/NavigationService';
+import NavigationHeader from '../components/nav/NavigationHeader';
 
 type Props = {
   navigation: any;
@@ -70,21 +72,21 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     if (!flags.CALL_ENABLED) return;
     await logEvent('call_open');
     await ttsService.speak(t('home.call'));
-    navigation.navigate('Call');
+    navigationService.navigate('Call');
   };
 
   const handleSOS = async () => {
     if (!flags.SOS_ENABLED) return;
     await logEvent('sos_send_attempt');
     await ttsService.speak(t('home.sos'));
-    navigation.navigate('SOS');
+    navigationService.navigate('SOS');
   };
 
   const handlePhotos = async () => {
     if (!flags.PHOTOS_ENABLED) return;
     await logEvent('photos_open');
     await ttsService.speak(t('home.photos'));
-    navigation.navigate('Photos');
+    navigationService.navigate('Photos');
   };
 
   const readTitle = () => {
@@ -96,7 +98,7 @@ export default function SeniorHomeScreen({ navigation }: Props) {
       const newCount = prev + 1;
       if (newCount >= 3) {
         setTapCount(0);
-        navigation.navigate('Settings');
+        navigationService.navigate('Settings');
       }
       return newCount;
     });
@@ -109,7 +111,7 @@ export default function SeniorHomeScreen({ navigation }: Props) {
     if (!voiceCommandsEnabled) return;
     await logEvent('voice_commands_open');
     await ttsService.speak(t('home.voiceCommands') || 'Voice Commands');
-    navigation.navigate('Voice');
+    navigationService.navigate('Voice');
   };
 
 
@@ -245,6 +247,13 @@ export default function SeniorHomeScreen({ navigation }: Props) {
 
   return (
     <View style={dynamicStyles.container}>
+      {/* Navigation Header */}
+      <NavigationHeader 
+        showBack={false}
+        showBreadcrumbs={true}
+        showQuickHome={false}
+      />
+      
       {/* Header with TTS and Voice Commands */}
       <View style={dynamicStyles.header}>
         <Pressable

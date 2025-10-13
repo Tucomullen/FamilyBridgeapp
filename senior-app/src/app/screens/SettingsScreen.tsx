@@ -6,6 +6,8 @@ import { featureFlags, FeatureFlag } from '../flags/featureFlags';
 import { logEvent } from '../telemetry/logEvent';
 import { ttsService, Voice, TTSSettings } from '../services/tts';
 import { useUIScale, UIScale } from '../hooks/useUIScale';
+import { navigationService } from '../services/navigation/NavigationService';
+import NavigationHeader from '../components/nav/NavigationHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {
@@ -206,13 +208,21 @@ export default function SettingsScreen({ navigation }: Props) {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text 
-        accessibilityRole="header"
-        style={[typography.h1, styles.title]}
-      >
-        {t('settings.title')}
-      </Text>
+    <View style={styles.container}>
+      {/* Navigation Header */}
+      <NavigationHeader 
+        showBack={true}
+        showBreadcrumbs={true}
+        showQuickHome={true}
+      />
+      
+      <ScrollView style={styles.scrollContainer}>
+        <Text 
+          accessibilityRole="header"
+          style={[typography.h1, styles.title]}
+        >
+          {t('settings.title')}
+        </Text>
 
       {/* Language Selection */}
       <View style={styles.section}>
@@ -572,7 +582,8 @@ export default function SettingsScreen({ navigation }: Props) {
           </Text>
         </Pressable>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -580,6 +591,9 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: colors.highContrastBg,
+  },
+  scrollContainer: {
+    flex: 1,
     padding: spacing.l,
   },
   title: {
